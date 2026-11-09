@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NieR 皮肤 · 字号放大档位预览</title>
+<style>
+:root{
+  --bg:#0d1015;--surface:#14181e;--surface-2:#1a1f26;--surface-3:#20262e;
+  --ink:#e6ebf2;--ink-2:#b6bfcc;--ink-3:#7d8796;--ink-4:#5b6472;
+  --line:rgba(230,235,242,.11);--line-2:rgba(230,235,242,.20);--line-3:rgba(230,235,242,.32);
+  --accent:#d2454e;--accent-deep:#a3262e;--accent-soft:rgba(210,69,78,.14);
+  --ok:#87978c;--paper:#f8f6f0;--paper-ink:#2a2d33;
+  --mono:'Cascadia Mono','Cascadia Code','SF Mono','JetBrains Mono',Consolas,'Liberation Mono',Menlo,monospace;
+  --display:'Bahnschrift','DIN Alternate','Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  --body:'Segoe UI','PingFang SC','Microsoft YaHei','Hiragino Sans GB',Arial,sans-serif;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s6:24px;--s8:32px;
+}
+html[data-mode="light"]{
+  --bg:#efece5;--surface:#f8f6f0;--surface-2:#fdfbf7;--surface-3:#ffffff;
+  --ink:#1c1f24;--ink-2:#4c525b;--ink-3:#6b727d;--ink-4:#8a9099;
+  --line:rgba(26,28,31,.14);--line-2:rgba(26,28,31,.24);--line-3:rgba(26,28,31,.38);
+  --accent:#a3262e;--accent-deep:#a3262e;--accent-soft:rgba(163,38,46,.08);
+  --ok:#4a6b5b;--paper:#f8f6f0;--paper-ink:#2a2d33;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.7 var(--body);-webkit-font-smoothing:antialiased}
+
+/* NOTE: platform font tokens live on body{}, exactly as the real
+   dsh-client-ui-theme/lib/styles/gradient-shadow-text.css declares them.
+   Components consume the COMPOSITE shorthand, not the -font-size child. */
+body{
+  --dsw-font-family:var(--body);
+  --ds-font-family-code:var(--mono);
+  --dsw-font-markdown-h1:700 24px/34px var(--dsw-font-family);
+  --dsw-font-markdown-h2:700 22px/32px var(--dsw-font-family);
+  --dsw-font-markdown-h3:700 20px/30px var(--dsw-font-family);
+  --dsw-font-markdown-h4:600 16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-base:16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-base-strong:600 16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-base-italic:italic 16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-base-strong-italic:italic 600 16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-table:15px/25px var(--dsw-font-family);
+  --dsw-font-markdown-table-head:500 15px/25px var(--dsw-font-family);
+  --dsw-font-markdown-small:14px/24px var(--dsw-font-family);
+  --dsw-font-markdown-small-strong:600 14px/24px var(--dsw-font-family);
+  --dsw-font-markdown-small-italic:italic 14px/24px var(--dsw-font-family);
+  --dsw-font-markdown-small-strong-italic:italic 600 14px/24px var(--dsw-font-family);
+  --dsw-font-markdown-code:14px/22px var(--ds-font-family-code);
+  --dsw-font-markdown-code-block:13px/22px var(--ds-font-family-code);
+  --dsw-font-markdown-code-block-small:12px/18px var(--ds-font-family-code);
+  --dsw-font-xl-24:600 24px/32px var(--dsw-font-family);
+  --dsw-font-l-20:500 20px/28px var(--dsw-font-family);
+  --dsw-font-m-18:500 16px/28px var(--dsw-font-family);
+  --dsw-font-base-16:16px/24px var(--dsw-font-family);
+  --dsw-font-base-strong-16:500 16px/24px var(--dsw-font-family);
+  --dsw-font-s-14:14px/22px var(--dsw-font-family);
+  --dsw-font-s-strong-14:500 14px/22px var(--dsw-font-family);
+  --dsw-font-xs-13:13px/20px var(--dsw-font-family);
+  --dsw-font-xs-strong-13:500 13px/20px var(--dsw-font-family);
+  --dsw-font-xxs-12:12px/18px var(--dsw-font-family);
+  --dsw-font-xxs-strong-12:500 12px/18px var(--dsw-font-family);
+  --dsw-font-xxxs-11:11px/14px var(--dsw-font-family);
+  --dsw-font-xxxs-strong-11:500 11px/14px var(--dsw-font-family);
+  /* skin-owned decorative type, not platform tokens */
+  --nier-hud-size:11px;--nier-dock-size:11px;--nier-cap-size:9.5px;--nier-readout:13px;
+}
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--s8) 100px}
+
+/* ── header ─────────────────────────────────────────── */
+header{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 94%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:0 calc(-1 * var(--s8));padding:0 var(--s8)}
+.hbar{max-width:1240px;margin:0 auto;min-height:56px;display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;padding:8px 0}
+.brand{display:flex;align-items:center;gap:9px;font:500 12px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
+.brand i{width:8px;height:8px;background:var(--accent);display:block}
+.brand small{font:400 10px/1 var(--mono);letter-spacing:.1em;color:var(--ink-4);text-transform:none}
+.spacer{flex:1}
+.seg{display:flex;border:1px solid var(--line-2);flex-wrap:wrap}
+.seg button{appearance:none;border:0;background:transparent;color:var(--ink-3);font:500 10px/1 var(--mono);
+  letter-spacing:.1em;padding:9px 11px;cursor:pointer;transition:background 140ms,color 140ms;white-space:nowrap}
+.seg button+button{border-left:1px solid var(--line-2)}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.seg-label{font:400 10px/1 var(--mono);letter-spacing:.14em;color:var(--ink-4);text-transform:uppercase}
+
+/* ── intro ──────────────────────────────────────────── */
+.hero{padding:var(--s8) 0 var(--s6)}
+.eyebrow{font:500 10px/1 var(--mono);letter-spacing:.26em;text-transform:uppercase;color:var(--accent);margin-bottom:var(--s3)}
+h1{font:400 30px/1.3 var(--display);letter-spacing:.03em;margin:0 0 var(--s3)}
+p.note{font-size:13px;color:var(--ink-2);max-width:86ch;line-height:1.85;margin:0 0 var(--s3)}
+.mono{font-family:var(--mono)}
+.muted{color:var(--ink-3)}
+.callout{border:1px solid var(--line-2);border-left:2px solid var(--accent);background:var(--surface);
+  padding:var(--s3) var(--s4);font-size:12px;line-height:1.8;color:var(--ink-2);margin-bottom:var(--s4)}
+.callout strong{color:var(--ink);font-weight:500}
+mark{background:var(--accent-soft);color:var(--accent);padding:0 3px}
+.status{display:flex;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:var(--s4);flex-wrap:wrap}
+.status div{background:var(--surface);padding:10px 16px;flex:1;min-width:170px}
+.status b{display:block;font:400 17px/1.3 var(--display);color:var(--ink)}
+.status span{font:400 10px/1.5 var(--mono);letter-spacing:.1em;color:var(--ink-4);text-transform:uppercase}
+
+/* ── simulated app ──────────────────────────────────── */
+.app-label{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.app-label b{font:500 10px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.app-label .hint{font:400 10px/1 var(--mono);color:var(--accent);letter-spacing:.06em}
+.app{display:grid;grid-template-columns:214px 1fr 250px;height:560px;border:1px solid var(--line-2);
+  background:var(--surface);position:relative;overflow:hidden}
+.app::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:9;
+  background-image:repeating-linear-gradient(to bottom,rgba(230,235,242,.012) 0 1px,transparent 1px 4px)}
+html[data-mode="light"] .app::before{background-image:repeating-linear-gradient(to bottom,rgba(26,28,31,.016) 0 1px,transparent 1px 4px)}
+.col{min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.col+.col{border-left:1px solid var(--line)}
+.col-head{height:42px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--line);
+  font:var(--dsw-font-s-strong-14);color:var(--ink-2);letter-spacing:.04em}
+.col-head i{width:6px;height:6px;background:var(--accent);display:block;flex:none}
+
+/* sidebar */
+.side{padding:8px 0;overflow:auto;flex:1}
+.side-t{font:var(--dsw-font-xxxs-strong-11);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-4);padding:10px 12px 6px}
+.side-i{padding:7px 12px;font:var(--dsw-font-xs-13);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.side-i:hover{background:var(--surface-2);color:var(--ink-2)}
+.side-i.on{background:var(--surface-2);color:var(--ink);box-shadow:inset 2px 0 0 var(--accent)}
+.side-i small{display:block;font:var(--dsw-font-xxxs-11);color:var(--ink-4);margin-top:2px}
+.side-foot{border-top:1px solid var(--line);padding:10px 12px;font:var(--dsw-font-xxs-12);color:var(--ink-4);flex:none}
+
+/* conversation */
+.msgs{flex:1;overflow:auto;padding:18px 22px}
+.msg{margin-bottom:18px}
+.msg .who{font:var(--dsw-font-xxs-strong-12);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.msg .bubble{font:var(--dsw-font-markdown-base);color:var(--ink-2)}
+.msg .bubble strong{font:var(--dsw-font-markdown-base-strong);color:var(--ink)}
+.msg .bubble em{font:var(--dsw-font-markdown-base-italic);color:var(--ink)}
+.msg h2{font:var(--dsw-font-markdown-h2);color:var(--ink);margin:14px 0 6px;letter-spacing:.02em}
+.msg h3{font:var(--dsw-font-markdown-h3);color:var(--ink);margin:12px 0 6px}
+.msg .sm{font:var(--dsw-font-markdown-small);color:var(--ink-3)}
+.msg .code{font:var(--dsw-font-markdown-code-block);background:var(--surface-3);border:1px solid var(--line-2);
+  padding:10px 12px;margin:10px 0;color:var(--ink-2);white-space:pre-wrap}
+.msg table{border-collapse:collapse;width:100%;margin:10px 0;font:var(--dsw-font-markdown-table);color:var(--ink-3)}
+.msg th{font:var(--dsw-font-markdown-table-head);color:var(--ink-2);text-align:left;border-bottom:1px solid var(--line-2);padding:5px 10px 5px 0}
+.msg td{border-bottom:1px solid var(--line);padding:5px 10px 5px 0}
+.composer{flex:none;border-top:1px solid var(--line);padding:12px 16px;font:var(--dsw-font-s-14);color:var(--ink-4);
+  display:flex;align-items:center;justify-content:space-between;gap:10px}
+.composer .pill{font:var(--dsw-font-xxxs-11);letter-spacing:.1em;border:1px solid var(--line-2);padding:4px 8px;color:var(--ink-4);white-space:nowrap}
+
+/* settings */
+.set{padding:12px;overflow:auto;flex:1}
+.set-card{border:1px solid var(--line-2);background:var(--surface-2);padding:12px;margin-bottom:10px}
+.set-card h4{font:var(--dsw-font-s-strong-14);color:var(--ink);margin:0 0 4px}
+.set-card p{font:var(--dsw-font-xs-13);color:var(--ink-4);margin:0 0 10px}
+.set-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line);
+  font:var(--dsw-font-xxs-12);color:var(--ink-3)}
+.set-row code{font:var(--dsw-font-markdown-code-block-small);color:var(--ink-2)}
+.toggle{width:26px;height:14px;border:1px solid var(--line-3);position:relative;flex:none}
+.toggle::after{content:'';position:absolute;right:1px;top:1px;width:10px;height:10px;background:var(--accent)}
+.toggle.off::after{right:auto;left:1px;background:var(--ink-4)}
+
+/* skin-owned HUD + dock */
+.hud-br{position:absolute;width:14px;height:14px;border:0 solid var(--line-3);z-index:10;pointer-events:none}
+.hud-br.tl{top:8px;left:8px;border-top-width:1px;border-left-width:1px}
+.hud-br.br{bottom:8px;right:8px;border-bottom-width:1px;border-right-width:1px}
+.hud-readout{position:absolute;left:12px;bottom:6px;z-index:10;pointer-events:none;
+  font:500 var(--nier-hud-size)/1 var(--mono);letter-spacing:.16em;color:var(--accent);opacity:.6;text-transform:uppercase}
+.dock{position:absolute;right:12px;bottom:12px;z-index:11;display:flex;gap:1px;padding:4px;
+  background:rgba(16,20,26,.78);border:1px solid rgba(230,235,242,.22);
+  font:500 var(--nier-dock-size)/1 var(--mono);letter-spacing:.08em;color:rgba(230,235,242,.8)}
+.dock b{padding:6px 8px;font-weight:500}
+.dock b.on{color:var(--accent)}
+.archive{position:absolute;left:10px;bottom:26px;z-index:11;width:132px;background:var(--paper);
+  padding:5px 5px 16px;border:1px solid rgba(26,28,31,.45);box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.archive .ph{height:40px;background:linear-gradient(150deg,#3a4049,#15181d)}
+.archive .cap{position:absolute;left:5px;bottom:4px;font:600 var(--nier-cap-size)/1 var(--mono);
+  letter-spacing:.1em;color:#5c6167;white-space:nowrap}
+
+/* ── legend / coverage ──────────────────────────────── */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:var(--s6)}
+.panel{background:var(--surface);padding:var(--s4)}
+.panel h3{font:500 12px/1.4 var(--display);letter-spacing:.06em;margin:0 0 10px;color:var(--ink)}
+.panel ul{margin:0;padding-left:18px;font-size:12px;line-height:1.9;color:var(--ink-3)}
+.panel li::marker{color:var(--accent)}
+.panel .k{font-family:var(--mono);color:var(--ink-2);font-size:11px}
+.warn{border-color:var(--accent)}
+.warn h3{color:var(--accent)}
+
+/* ── generated CSS ──────────────────────────────────── */
+.cssbox{margin-top:var(--s6);border:1px solid var(--line);background:var(--surface)}
+.cssbox .hh{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);
+  font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.cssbox .hh .spacer{flex:1}
+.cssbox pre{margin:0;padding:14px;max-height:230px;overflow:auto;font:400 11px/1.65 var(--mono);
+  color:var(--ink-2);white-space:pre;tab-size:2}
+.cssbox pre .sel{color:var(--accent)}
+.cssbox pre .cm{color:var(--ink-4)}
+
+footer{border-top:1px solid var(--line);margin-top:var(--s8);padding-top:var(--s4);
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  font:400 10px/1.6 var(--mono);letter-spacing:.08em;color:var(--ink-4);text-transform:uppercase}
+
+@media(max-width:1000px){.app{grid-template-columns:180px 1fr}.set-col{display:none}.cols{grid-template-columns:1fr}}
+@media(max-width:720px){.app{grid-template-columns:1fr}.side-col{display:none}.wrap{padding:0 12px 60px}header{margin:0 -12px;padding:0 12px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body data-scale="0">
+<style id="scale-css"></style>
+
+<header>
+  <div class="hbar">
+    <div class="brand"><i></i>字体放大档位 <small>提案预览 · 皮肤源码未改动</small></div>
+    <div class="spacer"></div>
+    <span class="seg-label">档位</span>
+    <div class="seg" id="scaleSeg">
+      <button type="button" data-scale="0" aria-pressed="true">原始</button>
+      <button type="button" data-scale="1" aria-pressed="false">稍大 · 推荐</button>
+      <button type="button" data-scale="2" aria-pressed="false">较大</button>
+      <button type="button" data-scale="3" aria-pressed="false">过大 · 不建议</button>
+    </div>
+    <div class="seg" id="modeSeg">
+      <button type="button" data-mode="dark" aria-pressed="true">Dark</button>
+      <button type="button" data-mode="light" aria-pressed="false">Light</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Type scale / readability pass · 2026-11-07</div>
+    <h1>稍微放大界面字体，方便阅读</h1>
+    <p class="note">可以，而且你这句反馈纠正了我上一版提案的一处偏差：我为了「HUD 减重」把控制条 11→10px、开屏标题 12→10px，是往小调的。<strong>精细化不该等于缩小，可读性优先。</strong> 下面这个预览模拟 DSH 界面，顶部切档可实时对比；页面本身用的就是平台真实的字体令牌机制，所以看到的变化就是将来真正会生效的范围。</p>
+    <div class="callout">
+      <strong>技术前提（决定了怎么改）：</strong>平台组件用的是<strong>简写变量</strong> <span class="mono">font: var(--dsw-font-xs-13)</span>，不是 <span class="mono">var(--dsw-font-xs-13-font-size)</span>。所以只改 <span class="mono">-font-size</span> 子变量<strong>不会生效</strong>；必须覆盖 <span class="mono">body{}</span> 上的简写变量（平台共 <strong>30 个</strong>，含 4 个斜体变体，按需要选子集），并同步 <span class="mono">-font-size / -line-height</span>。这些变量不属于 <span class="mono">--dsw-alias-* / --dsw-specific-*</span>，因此<span class="mono">令牌门禁仍是 89/89</span>，零风险。<mark>覆盖规则必须写在 body 上</mark>（平台就声明在 body；写 :root 会被压过）；<mark>斜体变体必须一起改</mark>，否则正文里的斜体词会比正文字号小一档。
+    </div>
+    <div class="status">
+      <div><b id="s-read">16 → 16 px</b><span>正文 markdown-base</span></div>
+      <div><b id="s-ui">13 → 13 px</b><span>界面控件 xs-13</span></div>
+      <div><b id="s-code">13 → 13 px</b><span>代码块 code-block</span></div>
+      <div><b id="s-risk">无</b><span>布局溢出风险</span></div>
+    </div>
+  </div>
+
+  <div class="app-label"><b>模拟 DSH 界面</b><span class="hint" id="scaleHint">当前：原始基线</span></div>
+  <div class="app" id="app">
+    <span class="hud-br tl"></span><span class="hud-br br"></span>
+    <div class="col side-col">
+      <div class="col-head"><i></i>会话</div>
+      <div class="side">
+        <div class="side-t">Today</div>
+        <div class="side-i on">主题皮肤精细化<small>2 分钟前 · 12 条消息</small></div>
+        <div class="side-i">插件安装与体检<small>1 小时前 · 8 条消息</small></div>
+        <div class="side-i">模型配置对照<small>昨天 · 31 条消息</small></div>
+        <div class="side-t">Earlier</div>
+        <div class="side-i">废墟场景层调参<small>11-05 · 24 条消息</small></div>
+        <div class="side-i">A2 档案卡设计稿<small>11-04 · 17 条消息</small></div>
+        <div class="side-i">启动动画分镜<small>11-02 · 9 条消息</small></div>
+        <div class="side-i">配色令牌 89 项<small>11-01 · 42 条消息</small></div>
+      </div>
+      <div class="side-foot" aria-hidden="true"></div>
+    </div>
+
+    <div class="col">
+      <div class="col-head"><i></i>主题皮肤精细化</div>
+      <div class="msgs">
+        <div class="msg">
+          <div class="who">Assistant</div>
+          <div class="bubble">界面字体的可读性主要由三件事决定：<strong>字号、行高、以及字距</strong>。只放大字号而不同步行高，文字会挤在原有行盒里，反而更难读；<em>斜体强调</em>也必须一起跟着放大。</div>
+          <h2>排版令牌的覆盖范围</h2>
+          <div class="bubble sm">平台有 30 个 <span class="mono">--dsw-font-*</span> 简写变量，被组件以 <span class="mono">font: var(...)</span> 消费约 68 处；另有约 303 处硬编码 px 不受令牌影响。下面是典型的代码块与表格：</div>
+          <div class="code">body{
+  --dsw-font-markdown-base: 16px/28px var(--dsw-font-family);
+  --dsw-font-xs-13: 13px/20px var(--dsw-font-family);
+}</div>
+          <table><thead><tr><th>区域</th><th>原始</th><th>稍大</th></tr></thead><tbody>
+            <tr><td>正文</td><td>16px</td><td>17px</td></tr>
+            <tr><td>表格</td><td>15px</td><td>16px</td></tr>
+            <tr><td>控件</td><td>13px</td><td>13px</td></tr>
+          </tbody></table>
+          <div class="sm">小字说明：状态标签、脚注与辅助信息使用 markdown-small 档。</div>
+        </div>
+        <div class="msg">
+          <div class="who">You</div>
+          <div class="bubble">稍微放大一点就好，主要是长时间看设置和日志时眼睛不累。</div>
+        </div>
+      </div>
+      <div class="composer"><span>输入消息…</span><span class="pill">↵ 发送</span></div>
+    </div>
+
+    <div class="col set-col">
+      <div class="col-head"><i></i>设置</div>
+      <div class="set">
+        <div class="set-card"><h4>模型</h4><p>当前会话使用的推理模型</p>
+          <div class="set-row"><span>Provider</span><code>our-free-model</code></div>
+          <div class="set-row"><span>模型 ID</span><code>nemotron-3.5</code></div>
+          <div class="set-row"><span>推理强度</span><code>high</code></div>
+        </div>
+        <div class="set-card"><h4>外观</h4><p>主题与显示选项</p>
+          <div class="set-row"><span>暗色模式</span><span class="toggle"></span></div>
+          <div class="set-row"><span>减少动效</span><span class="toggle off"></span></div>
+          <div class="set-row"><span>详细用量</span><span class="toggle"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <span class="hud-readout">// 02 / standby</span>
+    <div class="dock"><b class="on">P</b><b>A</b><b>W</b><b>R</b></div>
+    <div class="archive"><div class="ph"></div><div class="cap">TYPE-A No.2 / 01</div></div>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h3>这一档会放大什么</h3>
+      <ul id="willList"></ul>
+    </div>
+    <div class="panel" id="riskPanel">
+      <h3>边界与风险</h3>
+      <ul id="riskList"></ul>
+    </div>
+  </div>
+
+  <div class="cssbox">
+    <div class="hh"><span>当前档位将注入的 CSS</span><span class="spacer"></span><span id="cssCount">0 条声明</span></div>
+    <pre id="cssOut"></pre>
+  </div>
+
+  <footer><span>NieR:Automata skin · font scale proposal · 皮肤源码未改动</span><span>2026-11-07 · 只读核查 + 预览</span></footer>
+</div>
+
+<script>
+(function(){
+  /* All 30 platform composite tokens, incl. the 4 italic variants.
+     Tuple: name, weight|'', size, line-height, family var, italic? */
+  var TOKENS=[
+    ['markdown-h1',700,24,34,'family',0],['markdown-h2',700,22,32,'family',0],
+    ['markdown-h3',700,20,30,'family',0],['markdown-h4',600,16,28,'family',0],
+    ['markdown-base','',16,28,'family',0],['markdown-base-strong',600,16,28,'family',0],
+    ['markdown-base-italic','',16,28,'family',1],['markdown-base-strong-italic',600,16,28,'family',1],
+    ['markdown-table','',15,25,'family',0],['markdown-table-head',500,15,25,'family',0],
+    ['markdown-small','',14,24,'family',0],['markdown-small-strong',600,14,24,'family',0],
+    ['markdown-small-italic','',14,24,'family',1],['markdown-small-strong-italic',600,14,24,'family',1],
+    ['markdown-code','',14,22,'code',0],['markdown-code-block','',13,22,'code',0],
+    ['markdown-code-block-small','',12,18,'code',0],
+    ['xl-24',600,24,32,'family',0],['l-20',500,20,28,'family',0],['m-18',500,16,28,'family',0],
+    ['base-16','',16,24,'family',0],['base-strong-16',500,16,24,'family',0],
+    ['s-14','',14,22,'family',0],['s-strong-14',500,14,22,'family',0],
+    ['xs-13','',13,20,'family',0],['xs-strong-13',500,13,20,'family',0],
+    ['xxs-12','',12,18,'family',0],['xxs-strong-12',500,12,18,'family',0],
+    ['xxxs-11','',11,14,'family',0],['xxxs-strong-11',500,11,14,'family',0]
+  ];
+  var READ=/^(markdown-|base-16|base-strong-16|l-20|m-18|xl-24)/;
+  var isRead=function(n){return READ.test(n);};
+
+  /* Per-step deltas: [reading, controls, skin-owned] in px. Line-height grows +2 per +1px. */
+  var LEVELS={
+    0:{name:'原始基线',read:0,ui:0,skin:0,risk:'无',
+       will:['保持平台全部 30 个简写变量原值（含 4 个斜体变体）','皮肤自有 HUD / 控制条 / 档案卡 / 读数保持 11 / 11 / 9.5 / 13px','无任何布局影响'],
+       risks:['这是当前线上基线，用于对照。','平台约 303 处硬编码 px 与 68 处令牌消费并存，二者都不改动。']},
+    1:{name:'稍大 · 推荐',read:1,ui:0,skin:1,risk:'极低',
+       will:['阅读区 +1px：正文 16→17、表格 15→16、小字 14→15、代码块 13→14、标题同步','4 个斜体变体同步 +1px：base-italic / base-strong-italic / small-italic / small-strong-italic，正文里的斜体词不会比正小','行高随字号 +2px，例如 16/28 → 17/30，避免文字挤在旧行盒里','皮肤自有装饰字 +1px：HUD 11→12、控制条 11→12、档案卡 9.5→10.5、读数 13→14','共覆盖 22 个阅读区简写变量 + 4 个私有变量；界面控件（13 / 12 / 11px）保持原值，侧栏与按钮不变形'],
+       risks:['只覆盖 30 个简写里的 22 个阅读档 + 4 个私有变量，其余 8 个控件档不动，声明少、可控。','固定高度容器（42px 栏头、26px 开关）不受影响，因为控件档没动。','宿主约 303 处硬编码 px 仍保持原样——这既是「稍微」的安全边界，也是无法 100% 覆盖界面的原因。','档案卡说明 9.5→10.5px 后在 96px 卡内会折行；落地时需加 white-space:nowrap 并把卡片加宽到约 132px（本预览已按此修正）。']},
+    2:{name:'较大',read:1,ui:1,skin:1,risk:'中',
+       will:['阅读区 +1px（同「稍大」，含 4 个斜体变体）','界面控件全部 +1px：13→14、12→13、11→12（8 个控件简写变量）','30 个简写变量全部覆盖，侧栏会话、设置行、状态标签、按钮文字一起变大'],
+       risks:['控件行高 20→22、18→20、14→16，密集列表整体变高，侧栏可见条目减少约 10–15%。','固定高度容器（42px 栏头、26px 开关、20px 标签）可能被撑，需要逐个复核。','若出现溢出，优先回退 xxxs-11 / xxs-12 两档，不要改容器高度。']},
+    3:{name:'过大 · 不建议',read:2,ui:2,skin:2,risk:'高',
+       will:['全部 +2px，含 11→13、12→14、13→15','行高同步 +4px'],
+       risks:['仅用于展示上限：侧栏、表格、按钮会明显拥挤，两栏布局被挤压。','不建议落地；若确实需要更大，应改用「缩放整个界面」或平台级字号设置，而不是皮肤覆盖。']}
+  };
+
+  var out=document.getElementById('cssOut'), scaleStyle=document.getElementById('scale-css');
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  function render(level){
+    var L=LEVELS[level], lines=[], decl=0;
+    if(level!=='0'){
+      TOKENS.forEach(function(t){
+        var name=t[0], w=t[1], size=t[2], lh=t[3], fam=t[4], ital=t[5];
+        var d=(isRead(name)?L.read:L.ui), s=size+d, h=lh+(d*2);
+        if(!d) return;
+        var fv=fam==='code'?'var(--ds-font-family-code)':'var(--dsw-font-family)';
+        var shorthand=(ital?'italic ':'')+(w?w+' ':'')+s+'px/'+h+'px '+fv;
+        lines.push('  --dsw-font-'+name+': '+shorthand+';');
+        lines.push('  --dsw-font-'+name+'-font-size: '+s+'px;');
+        lines.push('  --dsw-font-'+name+'-line-height: '+h+'px;');
+        decl+=3;
+      });
+      if(L.skin){
+        lines.push('  /* 皮肤自有装饰字，不占平台令牌名额 */');
+        lines.push('  --nier-hud-size: '+(11+L.skin)+'px;');
+        lines.push('  --nier-dock-size: '+(11+L.skin)+'px;');
+        lines.push('  --nier-cap-size: '+(9.5+L.skin)+'px;');
+        lines.push('  --nier-readout: '+(13+L.skin)+'px;');
+        decl+=4;
+      }
+    }
+    var css=level==='0'
+      ? '/* 原始基线：不注入任何覆盖，平台 30 个简写变量保持原值 */'
+      : '/* 写在皮肤自注入 <style> 中，注意选择器必须是 body，不是 :root。\n'
+        + '   这些变量不属于 --dsw-alias-* / --dsw-specific-*，令牌门禁 89/89 不受影响。 */\nbody{\n'
+        + lines.join('\n')+'\n}';
+    scaleStyle.textContent=css;
+    out.innerHTML='<span class="cm">'+esc(css).replace(/body\{/,'<span class="sel">body{</span>')+'</span>';
+    document.getElementById('cssCount').textContent=decl+' 条声明';
+
+    var rd=16+L.read, ui=13+L.ui, cd=13+L.read;
+    document.getElementById('s-read').textContent='16 → '+rd+' px';
+    document.getElementById('s-ui').textContent='13 → '+ui+' px';
+    document.getElementById('s-code').textContent='13 → '+cd+' px';
+    document.getElementById('s-risk').textContent=L.risk;
+    document.getElementById('s-risk').style.color=(level==='3'?'var(--accent)':level==='2'?'#cf6a63':'var(--ink)');
+    document.getElementById('scaleHint').textContent='当前：'+L.name+' · 阅读 +'+L.read+'px / 控件 +'+L.ui+'px / 装饰 +'+L.skin+'px';
+    document.getElementById('willList').innerHTML=L.will.map(function(x){return '<li>'+x+'</li>';}).join('');
+    document.getElementById('riskList').innerHTML=L.risks.map(function(x){return '<li>'+x+'</li>';}).join('');
+    document.getElementById('riskPanel').className='panel'+(level==='3'?' warn':'');
+  }
+
+  function press(seg,attr,val){
+    [].forEach.call(seg.querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',String(b.getAttribute(attr)===val));});
+  }
+  document.getElementById('scaleSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    var v=b.getAttribute('data-scale');
+    document.body.setAttribute('data-scale',v); press(this,'data-scale',v); render(v);
+  });
+  document.getElementById('modeSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    var v=b.getAttribute('data-mode');
+    document.documentElement.setAttribute('data-mode',v); press(this,'data-mode',v);
+  });
+  var q=new URLSearchParams(location.search), s=q.get('scale'), m=q.get('mode');
+  if(/^[0-3]$/.test(s||'')){document.body.setAttribute('data-scale',s);press(document.getElementById('scaleSeg'),'data-scale',s);}
+  if(m==='light'||m==='dark'){document.documentElement.setAttribute('data-mode',m);press(document.getElementById('modeSeg'),'data-mode',m);}
+  render(document.body.getAttribute('data-scale'));
+})();
+</script>
+</body>
+</html>

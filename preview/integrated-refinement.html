@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NieR 皮肤 · T0 + T1 集成结果</title>
+<style id="platform">
+/* Faithful copy of the platform body{} typography baseline
+   (dsh-client-ui-theme/lib/styles/gradient-shadow-text.css). Declared BEFORE
+   the skin sheet is injected, so the skin's +1px overrides win exactly as in DSH. */
+:root{
+  --body:'Segoe UI','PingFang SC','Microsoft YaHei','Hiragino Sans GB',Arial,sans-serif;
+  --mono:'Cascadia Mono',Consolas,'SF Mono',Menlo,monospace;
+}
+body{
+  --dsw-font-family:var(--body);
+  --ds-font-family-code:var(--mono);
+  --dsw-font-markdown-h1:700 24px/34px var(--dsw-font-family);
+  --dsw-font-markdown-h2:700 22px/32px var(--dsw-font-family);
+  --dsw-font-markdown-h3:700 20px/30px var(--dsw-font-family);
+  --dsw-font-markdown-h4:600 16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-base:16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-base-strong:600 16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-base-italic:italic 16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-base-strong-italic:italic 600 16px/28px var(--dsw-font-family);
+  --dsw-font-markdown-table:15px/25px var(--dsw-font-family);
+  --dsw-font-markdown-table-head:500 15px/25px var(--dsw-font-family);
+  --dsw-font-markdown-small:14px/24px var(--dsw-font-family);
+  --dsw-font-markdown-small-strong:600 14px/24px var(--dsw-font-family);
+  --dsw-font-markdown-small-italic:italic 14px/24px var(--dsw-font-family);
+  --dsw-font-markdown-small-strong-italic:italic 600 14px/24px var(--dsw-font-family);
+  --dsw-font-markdown-code:14px/22px var(--ds-font-family-code);
+  --dsw-font-markdown-code-block:13px/22px var(--ds-font-family-code);
+  --dsw-font-markdown-code-block-small:12px/18px var(--ds-font-family-code);
+  --dsw-font-xl-24:600 24px/32px var(--dsw-font-family);
+  --dsw-font-l-20:500 20px/28px var(--dsw-font-family);
+  --dsw-font-m-18:500 16px/28px var(--dsw-font-family);
+  --dsw-font-base-16:16px/24px var(--dsw-font-family);
+  --dsw-font-base-strong-16:500 16px/24px var(--dsw-font-family);
+  --dsw-font-s-14:14px/22px var(--dsw-font-family);
+  --dsw-font-s-strong-14:500 14px/22px var(--dsw-font-family);
+  --dsw-font-xs-13:13px/20px var(--dsw-font-family);
+  --dsw-font-xs-strong-13:500 13px/20px var(--dsw-font-family);
+  --dsw-font-xxs-12:12px/18px var(--dsw-font-family);
+  --dsw-font-xxs-strong-12:500 12px/18px var(--dsw-font-family);
+  --dsw-font-xxxs-11:11px/14px var(--dsw-font-family);
+  --dsw-font-xxxs-strong-11:500 11px/14px var(--dsw-font-family);
+}
+</style>
+<style id="appcss">
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;overflow:hidden;
+  --bg:#111419;--panel:rgba(20,23,27,.80);--panel-2:rgba(24,28,34,.86);
+  --ink:#e4e9f0;--ink-2:#a9b2c0;--ink-3:#8b95a4;--ink-4:#6d7684;
+  --line:rgba(200,214,232,.12);--line-2:rgba(200,214,232,.22);
+  --accent:#dc4b54;--ok:#6f9c80;--warn:#a87370;--err:#f0656c;
+  --paper:#f8f6f0;
+  background:var(--bg);color:var(--ink);font:400 14px/1.7 var(--body);
+  -webkit-font-smoothing:antialiased;
+}
+body:not([data-ds-dark-theme]){
+  --bg:#efece5;--panel:rgba(248,246,240,.82);--panel-2:rgba(252,250,245,.88);
+  --ink:#1c1f24;--ink-2:#4c525b;--ink-3:#6b727d;--ink-4:#8a9099;
+  --line:rgba(26,28,31,.14);--line-2:rgba(26,28,31,.28);
+  --accent:#a3262e;--ok:#204236;--warn:#a8534f;--err:#8f2028;
+}
+#app{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column}
+.topbar{height:48px;flex:none;display:flex;align-items:center;gap:16px;padding:0 20px;
+  border-bottom:1px solid var(--line);background:var(--panel)}
+.topbar .wm{font:500 var(--nier-type-4,13px)/1 var(--body);letter-spacing:.02em}
+.topbar .sp{flex:1}
+.topbar .pill{font:var(--dsw-font-xxxs-11);letter-spacing:.02em;color:var(--ink-3);
+  border:1px solid var(--line-2);padding:4px 10px}
+.cols{flex:1;display:flex;min-height:0}
+.sidebar{width:232px;flex:none;border-right:1px solid var(--line);background:var(--panel);
+  padding:16px 0;display:flex;flex-direction:column;gap:2px}
+.side-t{padding:0 16px 8px;font:500 11px/1 var(--mono);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-4)}
+.side-i{padding:9px 16px;font:var(--dsw-font-xs-13);color:var(--ink-2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side-i.on{background:var(--line);color:var(--ink);border-left:2px solid var(--accent);padding-left:14px}
+.side-i small{display:block;font:var(--dsw-font-xxxs-11);color:var(--ink-4);margin-top:2px}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding:12px 16px;
+  font:var(--dsw-font-xxs-12);color:var(--ink-4)}
+.chat{flex:1;min-width:0;padding:22px 32px 120px;overflow:hidden}
+.chat .who{font:500 12px/1 var(--mono);letter-spacing:.12em;color:var(--accent);margin-bottom:8px}
+.chat h2{font:var(--dsw-font-markdown-h2);margin:18px 0 8px;letter-spacing:.02em}
+.chat .bubble{font:var(--dsw-font-markdown-base);color:var(--ink-2);max-width:640px}
+.chat .bubble strong{font:var(--dsw-font-markdown-base-strong);color:var(--ink)}
+.chat .bubble em{font:var(--dsw-font-markdown-base-italic);color:var(--ink)}
+.chat .sm{font:var(--dsw-font-markdown-small);color:var(--ink-3);max-width:640px;margin-top:10px}
+.chat .code{font:var(--dsw-font-markdown-code-block);background:var(--panel-2);
+  border:1px solid var(--line-2);padding:10px 14px;margin-top:14px;max-width:600px;
+  color:var(--ink-2);white-space:pre-wrap}
+.chat table{border-collapse:collapse;width:100%;max-width:620px;margin:12px 0;
+  font:var(--dsw-font-markdown-table);color:var(--ink-3)}
+.chat th{font:var(--dsw-font-markdown-table-head);text-align:left;border-bottom:1px solid var(--line-2);
+  padding:5px 12px 5px 0;color:var(--ink-2)}
+.chat td{padding:5px 12px 5px 0;border-bottom:1px solid var(--line)}
+.settings{width:286px;flex:none;border-left:1px solid var(--line);background:var(--panel);padding:16px}
+.set-card{border:1px solid var(--line-2);background:var(--panel-2);padding:14px 16px;margin-bottom:14px}
+.set-card h4{font:var(--dsw-font-s-strong-14);margin:0 0 4px;letter-spacing:.02em}
+.set-card p{font:var(--dsw-font-xs-13);color:var(--ink-4);margin:0 0 12px}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:7px 0;border-top:1px solid var(--line);font:var(--dsw-font-xxs-12);color:var(--ink-3)}
+.set-row code{font:var(--dsw-font-markdown-code-block-small);color:var(--ink-2)}
+.sw{display:inline-block;width:30px;height:16px;border:1px solid var(--line-2);position:relative;vertical-align:middle}
+.sw::after{content:'';position:absolute;right:2px;top:2px;width:10px;height:10px;background:var(--accent)}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.n-btn{font:500 12px/1 var(--body);letter-spacing:.02em;padding:8px 16px;
+  border:1px solid var(--line-2);background:transparent;color:var(--ink-2);cursor:pointer}
+.n-btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.status-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.st{display:inline-flex;align-items:center;gap:6px;font:var(--dsw-font-xxxs-11);
+  border:1px solid var(--line-2);padding:5px 9px;color:var(--ink-3)}
+.st i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.st.s1{color:var(--ok)}.st.s2{color:var(--warn)}.st.s3{color:var(--err)}.st.s4{color:var(--ink-4)}
+.st.s2 i{background:transparent;border:1px solid currentColor}
+.st.s3 i{border-radius:0}
+.st.s4 i{border-radius:0;background:transparent;border:1px solid currentColor}
+
+/* Preview-only: in DSH the A2 plate sits above normal-flow text (z-index:1).
+   Our simulated app is a positioned z-index:2 layer, so lift just this plate
+   back above it to keep the T1-b archive-card refinement visible. */
+#dsh-skin-nier-a2{z-index:3!important}
+
+/* ── toolbar + spec drawer (preview chrome, above the skin's fixed layers) ── */
+#toolbar{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:30001;
+  display:flex;gap:0;background:rgba(16,20,26,.94);border:1px solid rgba(230,235,242,.22);
+  font:500 11px/1 var(--mono);letter-spacing:.08em}
+#toolbar button{background:transparent;border:0;color:rgba(230,235,242,.62);
+  padding:9px 14px;cursor:pointer;font:inherit;letter-spacing:.08em}
+#toolbar button[aria-pressed="true"]{background:rgba(163,38,46,.30);color:#fff}
+#toolbar .tb-l{padding:9px 14px;color:rgba(230,235,242,.38);border-right:1px solid rgba(230,235,242,.16)}
+#drawer{position:fixed;right:0;top:0;bottom:0;width:524px;z-index:30000;overflow:auto;
+  background:#f8f6f0;color:#1c1f24;border-left:1px solid rgba(26,28,31,.35);
+  box-shadow:-18px 0 48px rgba(0,0,0,.35);padding:28px 24px 60px;
+  font:400 13px/1.65 var(--body);transition:transform .24s cubic-bezier(.2,.6,.2,1)}
+#drawer.hidden{transform:translateX(100%)}
+#drawer h1{font:500 22px/1.3 var(--body);letter-spacing:.02em;margin:0 0 6px}
+#drawer .eyebrow{font:500 10px/1 var(--mono);letter-spacing:.18em;color:#a3262e;text-transform:uppercase;margin-bottom:14px}
+#drawer .lead{color:#4c525b;margin:0 0 18px;font-size:13px}
+#drawer h2{font:500 14px/1.3 var(--body);letter-spacing:.02em;margin:26px 0 8px;
+  padding-bottom:7px;border-bottom:1px solid rgba(26,28,31,.24)}
+#drawer h2 span{font:500 10px/1 var(--mono);color:#a3262e;letter-spacing:.14em;margin-right:9px}
+#drawer p{color:#4c525b;margin:6px 0 10px;font-size:12px}
+#drawer table{width:100%;border-collapse:collapse;font-size:11px;margin:6px 0 4px}
+#drawer th{text-align:left;font-weight:500;color:#6b727d;border-bottom:1px solid rgba(26,28,31,.28);padding:5px 6px 5px 0}
+#drawer td{border-bottom:1px solid rgba(26,28,31,.10);padding:5px 6px 5px 0;vertical-align:top}
+#drawer table.tok th:last-child,#drawer table.tok td:last-child{white-space:nowrap;text-align:right;padding-right:2px}
+#drawer td.mono,#drawer .mono{font-family:var(--mono);font-size:10.5px;letter-spacing:-.01em}
+#drawer .old{color:#8a9099;text-decoration:line-through}
+#drawer .new{color:#1c1f24;font-weight:600}
+#drawer .ok{color:#204236;font-weight:600}
+#drawer ul{margin:6px 0 8px;padding-left:18px;color:#4c525b;font-size:12px}
+#drawer li{margin:3px 0}
+#drawer .chips{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 10px}
+#drawer .chip{font:500 10px/1 var(--mono);border:1px solid rgba(26,28,31,.28);padding:5px 7px;color:#2a2d33;background:#fff}
+#drawer .note{border-left:2px solid #a3262e;background:rgba(163,38,46,.055);
+  padding:9px 12px;margin:10px 0;font-size:11.5px;color:#4c525b}
+#drawer .pass{display:inline-block;background:#204236;color:#fff;font:500 10px/1 var(--mono);
+  padding:4px 7px;margin:0 4px 4px 0}
+#drawer footer{margin-top:28px;padding-top:12px;border-top:1px solid rgba(26,28,31,.2);
+  font:400 10px/1.6 var(--mono);color:#8a9099}
+.sw2{display:inline-block;width:13px;height:13px;border:1px solid rgba(26,28,31,.3);vertical-align:-2px;margin-right:4px}
+</style>
+</head>
+<body data-ds-dark-theme>
+
+<div id="app">
+  <div class="topbar">
+    <span class="wm">DeepSeek Harness</span>
+    <span class="sp"></span>
+    <span class="pill">desktop / 01</span>
+    <span class="pill">CTRL K</span>
+  </div>
+  <div class="cols">
+    <aside class="sidebar">
+      <div class="side-t">Sessions</div>
+      <div class="side-i on">精细化主题落地<small>刚刚 · T0 + T1</small></div>
+      <div class="side-i">设计系统尺度审计<small>昨天 · 89 tokens</small></div>
+      <div class="side-i">CJK 排版修正<small>11-06</small></div>
+      <div class="side-i">状态色明度分级<small>11-06</small></div>
+      <div class="side-i">字体可读性评估<small>11-05</small></div>
+      <div class="side-foot" aria-hidden="true"></div>
+    </aside>
+
+    <main class="chat">
+      <div class="who">SYSTEM / REFINE</div>
+      <div class="bubble">精细化不等于缩小。这一轮把<strong>阅读区正文从 16px 提到 17px</strong>，同时保留 13 / 12 / 11px 的控件档位不变，避免侧栏与按钮被撑变形；<em>四个斜体变体同步 +1px</em>，正文里的强调词不会比正小一档。</div>
+      <h2>尺度系统已落地</h2>
+      <div class="sm">私有变量统一用 --nier-* 前缀，写在皮肤自注入的样式表里。平台 89 个 --dsw-alias/specific 令牌一个都没新增，门禁保持 89/89 / 0 / 0。</div>
+      <div class="code">body{ --dsw-font-markdown-base: 17px/30px var(--dsw-font-family);
+  --nier-hud-size: 12px; --nier-cap-size: 10.5px; }</div>
+      <table><thead><tr><th>模块</th><th>改动</th><th>风险</th></tr></thead>
+        <tbody>
+          <tr><td>令牌层</td><td>状态色明度拉开</td><td>零</td></tr>
+          <tr><td>尺度层</td><td>7 组私有变量</td><td>低</td></tr>
+          <tr><td>组件层</td><td>A–G 对齐栅格</td><td>低</td></tr>
+        </tbody></table>
+    </main>
+
+    <aside class="settings">
+      <div class="set-card">
+        <h4>外观</h4><p>主题与装饰层设置</p>
+        <div class="set-row"><span>配色方案</span><code>A / graphite</code></div>
+        <div class="set-row"><span>壁纸</span><code>寄叶</code></div>
+        <div class="set-row"><span>粒子</span><code>dense</code></div>
+        <div class="btn-row"><button class="n-btn pri">开始执行</button><button class="n-btn">取消</button></div>
+      </div>
+      <div class="set-card">
+        <h4>状态色 · T0</h4><p>明度分级，不引入青蓝／暖金</p>
+        <div class="status-row">
+          <span class="st s1"><i></i>运行中</span><span class="st s2"><i></i>等待中</span>
+          <span class="st s3"><i></i>失败</span><span class="st s4"><i></i>空闲</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div id="toolbar">
+  <span class="tb-l">T0 + T1 · LIVE</span>
+  <button data-mode="dark" aria-pressed="true">深色</button>
+  <button data-mode="light" aria-pressed="false">浅色</button>
+  <button id="tgl" aria-pressed="false">规格面板</button>
+</div>
+
+<aside id="drawer" class="hidden">
+  <div class="eyebrow">Integrated build / 2026-11-07</div>
+  <h1>T0 + T1 集成结果</h1>
+  <p class="lead">左侧画面不是手绘模拟：它载入了本次构建生成的 <span class="mono">lib/client.js</span>，由插件自己注入真实样式表与 HUD／控制条／档案卡。深色、浅色切换也走真实令牌。</p>
+
+  <h2><span>01</span>T0 · 状态令牌明度分级</h2>
+  <p>只改数值、不动结构。全部落在既有 11 个 <span class="mono">state-*</span> 键上，配色仍严守黑／白／红／冷枪灰。</p>
+  <table class="tok">
+    <thead><tr><th>令牌</th><th>浅色</th><th>深色</th><th>AA</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">business-primary</td><td class="mono">#a3262e</td><td class="mono"><span class="old">#d2454e</span> → <span class="new">#dc4b54</span></td><td class="ok">4.13→4.55</td></tr>
+      <tr><td class="mono">error-primary</td><td class="mono"><span class="old">#b4473d</span> → <span class="new">#8f2028</span></td><td class="mono"><span class="old">#d9776c</span> → <span class="new">#f0656c</span></td><td class="ok">8.08 / 5.96</td></tr>
+      <tr><td class="mono">error-secondary</td><td class="mono">#c26057 → #ab4a48</td><td class="mono">#c26057 → #cf5a5c</td><td class="ok">5.11 / 4.63</td></tr>
+      <tr><td class="mono">warn-primary</td><td class="mono">#9d3a33 → #a8534f</td><td class="mono">#cf6a63 → #a87370</td><td class="ok">4.84 / 4.70</td></tr>
+      <tr><td class="mono">warn-label</td><td class="mono">→ #a04b47</td><td class="mono">→ #b98b87</td><td class="ok">5.41 / 6.24</td></tr>
+      <tr><td class="mono">warn-secondary</td><td class="mono">→ #bb7069</td><td class="mono">→ #9d7470</td><td class="ok">3.45 / 4.54</td></tr>
+      <tr><td class="mono">success-primary</td><td class="mono">#4a6b5b → #204236</td><td class="mono">#87978c → #6f9c80</td><td class="ok">10.26 / 5.93</td></tr>
+      <tr><td class="mono">success-secondary</td><td class="mono">→ #3b6a54</td><td class="mono">→ #6c927c</td><td class="ok">5.76 / 5.31</td></tr>
+      <tr><td class="mono">3× tertiary</td><td class="mono">底色微调</td><td class="mono">底色微调</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:8px"><b>分辨度</b>：浅色 error↔warn 由 ΔL* 6 拉到 <b>13.9</b>；success↔label-secondary <b>10.6</b>（深色 11.8）。深色品牌红从 4.13:1 提到 4.55:1，链接与焦点环达到 WCAG AA。</p>
+  <p>另：三个 <span class="mono">--ds-transition-duration*</span> 统一到 80 / 140 / 240ms；焦点环改用带透明度的 <span class="mono">--nier-focus</span>；<span class="mono">interactive-bg-hover-danger</span> 跟随新 error 色。</p>
+
+  <h2><span>02</span>T1-a · 私有尺度系统</h2>
+  <p>全部为 <span class="mono">--nier-*</span>，写在自注入样式表的 <span class="mono">:root</span>／<span class="mono">body[data-ds-dark-theme]</span>，<b>不进 TOKENS 对象</b>，所以门禁不变。</p>
+  <div class="chips">
+    <span class="chip">2 4 8 12 16 24 32 48</span><span class="chip">10 11 12 13 14 16 20 28 40</span>
+    <span class="chip">0 .02 .06 .12 .24</span><span class="chip">400 / 500</span>
+    <span class="chip">radius 0 / 2</span><span class="chip">E1 E2 hairline inset</span>
+    <span class="chip">80 140 240 400ms</span><span class="chip">cubic-bezier(.2,.6,.2,1)</span>
+  </div>
+  <ul>
+    <li>全局 <span class="mono">body button{.06em + uppercase}</span> 已退役 —— 它曾给每个汉字之间塞进约 0.8px。</li>
+    <li>标题字距 .05em → .02em；<span class="mono">:lang(zh)</span> / <span class="mono">[lang|="zh"]</span> 归零残留字距。</li>
+    <li>方角化排除条件加固（switch / toggle / range / color），宿主圆形控件不再被误伤。</li>
+  </ul>
+
+  <h2><span>03</span>字号「稍大」· 推荐档</h2>
+  <p>平台用 <span class="mono">font: var(--dsw-font-*)</span> 简写变量，因此覆盖必须写在 <span class="mono">body{}</span> 上（不是 <span class="mono">:root{}</span>），并同步 <span class="mono">-font-size / -line-height</span>。</p>
+  <table><thead><tr><th>区域</th><th>前</th><th>后</th></tr></thead><tbody>
+    <tr><td>正文</td><td class="mono">16px / 28px</td><td class="mono"><b>17px / 30px</b></td></tr>
+    <tr><td>代码块</td><td class="mono">13px / 22px</td><td class="mono"><b>14px / 24px</b></td></tr>
+    <tr><td>斜体强调</td><td class="mono">italic 600 16/28</td><td class="mono"><b>italic 600 17/30</b></td></tr>
+    <tr><td>控件（侧栏／按钮）</td><td class="mono">13 / 12 / 11px</td><td class="mono"><b>不变</b></td></tr>
+    <tr><td>皮肤装饰字</td><td class="mono">11 / 11 / 9.5 / 13</td><td class="mono"><b>12 / 12 / 10.5 / 14</b></td></tr>
+  </tbody></table>
+  <p>30 个平台简写中只覆盖 <b>22 个阅读档</b> + 4 个私有装饰字 = 70 条声明。固定高度容器不受影响。</p>
+
+  <h2><span>04</span>T1-b · 组件对齐 A–G</h2>
+  <table><thead><tr><th>项</th><th>前 → 后</th></tr></thead><tbody>
+    <tr><td><b>C</b> 档案卡</td><td class="mono">7/7/24 · .5 边 · 14/32 模糊阴影 · 9.5px/600 → 8/8/28 · .22 细边 · E2 两段轻阴影 · 10.5px/500 · 分隔线 + ARCHIVE 角标 · nowrap</td></tr>
+    <tr><td><b>D</b> 控制条</td><td class="mono">gap 1 · 6×9 · 11px/600 → 0 + 1px 分隔 · 8×12 · 12px/500 · 2px 微倒角 · 4px 角标 · 6px 拖拽把手 · 激活 2px 红底条</td></tr>
+    <tr><td><b>E</b> HUD</td><td class="mono">22px 括号 / 14-18-16 边距 / 11px/600/.18em → 16px 括号 / 12px 栅格 / 12px/500/.12em / 读数移到 32px 避开括号</td></tr>
+    <tr><td><b>F</b> 扫描线</td><td class="mono">1px/3px · .045 / .022 → 1px/4px · .018 / .012（降低约 60%，摩尔纹与正文发灰减轻）</td></tr>
+    <tr><td><b>G</b> 开屏诊断框</td><td class="mono">13px/.05em · 14×18 · 行高 2 · 9px 发光进度条 → 14px/.02em · 16×20 · 行高 1.8 · 6px 平涂 + 内高光 · 标题 500/.12em</td></tr>
+    <tr><td><b>A</b> 按钮</td><td class="mono">全局 .06em/uppercase 退役 → 8×16 · 500 · 2px 微倒角（仅皮肤自有容器）· 主按钮红条</td></tr>
+  </tbody></table>
+
+  <h2><span>05</span>有意不做 / 与提案的偏差</h2>
+  <div class="note"><b>T1-c 状态形状冗余整体跳过。</b> <span class="mono">data-state</span> 等钩子确实存在，但取值动态、类名哈希，注入 <span class="mono">::before</span> 标记会覆盖宿主伪元素并改变布局——收益不值得宿主风险。状态区分改由 T0 的明度分级承担（规格本身允许放弃）。</div>
+  <ul>
+    <li>全局方角化 <b>保留</b>（T2 明令不可整体移除），只加固排除条件；2px 微倒角加在皮肤自有容器，不再叠 <span class="mono">!important</span>。</li>
+    <li>宿主标题字重保持平台 700：改它会改动宿主层级，且与已确认的字号预览不一致。</li>
+    <li>档案卡说明 10.5px 是唯一半档，用于等宽说明字与 11px 无衬线正文的光学对齐。</li>
+    <li>扫描线是单条 fixed 伪元素，无法只从 <span class="mono">pre/code</span> 区域排除；改用统一降透明度达成同等目的。</li>
+  </ul>
+
+  <h2><span>06</span>回归验证</h2>
+  <p>
+    <span class="pass">89/89 令牌</span><span class="pass">0 unknown</span><span class="pass">0 uncovered</span>
+    <span class="pass">node --check OK</span><span class="pass">CSS 179 rules</span>
+    <span class="pass">稳定性 20/20</span><span class="pass">体检 18/18 OK</span>
+    <span class="pass">离线安装逐文件一致</span>
+  </p>
+  <p>无新增 <span class="mono">--dsw-*</span> 键、无新增 DOM 层、无 z-index 改动、无网络请求、无周期性定时器；<span class="mono">guard()/keep()</span> 与 20s 开屏看门狗保持原样。包体 655 KB（预算 700 KB，其中 338 KB 是四张出厂壁纸的 base64）。</p>
+
+  <footer>唯一编辑源 src/client.template.js · 产物 lib/client.js · 安装包 dsh-skin-nier-automata-1.1.0.tgz<br>已离线装入 profiles\desktop；完全退出并重新打开 DSH 后生效（bundle 只在启动时读取）。</footer>
+</aside>
+
+<script>window.__ModuleLoader__={load:function(s){window.__spec=s;}};console.warn=function(){};</script>
+<script src="../lib/client.js"></script>
+<script>
+(function(){
+  var mode='dark', tokensStyle=document.createElement('style');
+  tokensStyle.id='token-overrides';
+  document.head.appendChild(tokensStyle);
+  function paint(){
+    document.body.toggleAttribute('data-ds-dark-theme', mode==='dark');
+    var decls=Object.keys(window.__mod.TOKENS).map(function(k){
+      var v=window.__mod.TOKENS[k]; return k+':'+(mode==='dark'?v.dark:v.light)+';';
+    }).join('');
+    tokensStyle.textContent='body{'+decls+'}';
+    [].forEach.call(document.querySelectorAll('#toolbar [data-mode]'),function(b){
+      b.setAttribute('aria-pressed',String(b.getAttribute('data-mode')===mode));
+    });
+  }
+  window.__mod=window.__spec.factory(function(){return {};});
+  window.__mod.apply({
+    theme:{overrideTokens:function(){ paint(); return function(){}; }},
+    effect:function(fn){ return fn(); }
+  });
+  /* The boot sequence is a full-screen overlay; drop it in the preview only. */
+  var boot=document.getElementById('dsh-skin-nier-boot'); if(boot) boot.remove();
+
+  [].forEach.call(document.querySelectorAll('#toolbar [data-mode]'),function(b){
+    b.addEventListener('click',function(){ mode=b.getAttribute('data-mode'); paint(); });
+  });
+  var tgl=document.getElementById('tgl'), drawer=document.getElementById('drawer');
+  tgl.addEventListener('click',function(){
+    var open=drawer.classList.toggle('hidden')===false;
+    tgl.setAttribute('aria-pressed',String(open));
+  });
+  var q=new URLSearchParams(location.search);
+  if(q.get('mode')==='light'){ mode='light'; paint(); }
+  /* ?nofx=1 kills the 240ms drawer slide so headless screenshots never
+     capture a half-translated panel. Screenshots only; harmless otherwise. */
+  if(q.get('nofx')==='1'){
+    var kill=document.createElement('style');
+    kill.textContent='*{transition:none!important;animation:none!important}';
+    document.head.appendChild(kill);
+  }
+  if(q.get('view')==='spec'){ drawer.classList.remove('hidden'); tgl.setAttribute('aria-pressed','true'); }
+
+  /* ?chars=off   —— 两个角色全部移除，只剩纸与场
+     ?chars=one   —— 只留 2B：去掉双向遮罩、内缩 40px、给足明度，成为唯一主体
+     这是预览专用的覆盖层，皮肤本体不动。 */
+  var chars=q.get('chars');
+  if(chars==='off'||chars==='one'){
+    var ov=document.createElement('style'); ov.id='chars-override';
+    var css='';
+    if(chars==='off'){
+      css+='#dsh-skin-nier-figure,#dsh-skin-nier-a2{display:none!important}';
+    }else{
+      css+='#dsh-skin-nier-a2{display:none!important}'
+        +'#dsh-skin-nier-figure{right:40px!important;width:min(52vh,30vw)!important;opacity:1!important;'
+        +'-webkit-mask-image:none!important;mask-image:none!important}'
+        +'body[data-ds-dark-theme] #dsh-skin-nier-character{filter:contrast(1.1) brightness(1.24) drop-shadow(0 10px 34px rgba(0,0,0,.6))!important}'
+        +'body:not([data-ds-dark-theme]) #dsh-skin-nier-figure{opacity:.9!important}'
+        +'body:not([data-ds-dark-theme]) #dsh-skin-nier-character{filter:grayscale(1) contrast(.86) brightness(.96)!important;mix-blend-mode:multiply!important}';
+    }
+    ov.textContent=css; document.head.appendChild(ov);
+  }
+
+  /* ?scene=paper —— 浅色模式下把"废土景"换成"档案纸"：雾、城市、天空梯度全部撤掉，
+     只留一层几乎看不见的暖色呼吸。暗色模式不受影响。 */
+  if(q.get('scene')==='paper'){
+    var sp=document.createElement('style'); sp.id='scene-paper';
+    sp.textContent='body:not([data-ds-dark-theme]) #dsh-skin-nier-scene{'
+      +'--nier-sky:none;--nier-city:transparent;--nier-city-far:transparent;'
+      +'--nier-ground:transparent;--nier-glow:transparent;'
+      +'--nier-fog:rgba(196,190,178,.10)}'
+      +'body:not([data-ds-dark-theme]) .nier-fog.haze,'
+      +'body:not([data-ds-dark-theme]) .nier-fog.band{opacity:.18!important}';
+    document.head.appendChild(sp);
+  }
+})();
+</script>
+</body>
+</html>

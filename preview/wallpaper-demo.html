@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>壁纸位 · 图由你提供</title>
+<style>
+  :root{
+    --ink:#1c1f24; --ink-2:#4e535a; --ink-3:#8a857c;
+    --paper:#f8f6f0; --line:rgba(28,31,36,.14); --red:#a3262e;
+    --mono:'Cascadia Mono',Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font:400 14px/1.75 'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+    padding:40px 44px 80px}
+  .wrap{max-width:1180px;margin:0 auto}
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:34px}
+  .eyebrow{font:500 10.5px/1 var(--mono);letter-spacing:.24em;color:var(--red);text-transform:uppercase}
+  h1{margin:12px 0 10px;font:400 28px/1.3 inherit}
+  .lede{margin:0;color:var(--ink-2);max-width:76ch}
+  .lede b{font-weight:500;color:var(--ink)}
+  h2{margin:48px 0 14px;font:500 15px/1.4 inherit;letter-spacing:.02em}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:0 0 6px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font:500 10.5px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);padding-bottom:8px}
+  td:first-child{white-space:nowrap;font-weight:500}
+  code{font:400 12px/1 var(--mono);background:rgba(28,31,36,.06);padding:2px 5px;border-radius:2px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:6px}
+  .cap{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;
+    font:500 10.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+  .cap b{color:var(--ink);font-weight:500;letter-spacing:.06em;font-size:12px}
+  .cap .tag{margin-left:auto;padding:2px 6px;border:1px solid var(--line);border-radius:2px;text-transform:none}
+  figure{margin:0;border:1px solid var(--line);background:#000;overflow:hidden;border-radius:2px}
+  figure img{display:block;width:100%;height:auto}
+  .full figure{margin-top:6px}
+  .note{padding:15px 18px;border-left:2px solid var(--red);background:rgba(163,38,46,.045);
+    color:var(--ink-2);margin-top:22px}
+  .note b{color:var(--ink);font-weight:500}
+  ol.steps{margin:0;padding-left:20px;color:var(--ink-2)}
+  ol.steps li{padding:5px 0}
+  ol.steps b{color:var(--ink);font-weight:500}
+  .stack{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .box{background:#fff;border:1px solid var(--line);border-radius:3px;padding:16px 18px}
+  .box h3{margin:0 0 8px;font:500 13px/1.4 inherit;letter-spacing:.02em}
+  .box p{margin:0;color:var(--ink-2);font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Wallpaper · W panel</div>
+  <h1>两个壁纸位，图由你提供</h1>
+  <p class="lede">
+    入口在右下角控制坞的 <b>W</b> 键。面板里是<b>两个位置</b>（全幅主背景 + 左下 2:3 图版）和一个遮罩滑杆。
+    <b>不带任何出厂图</b>。图片只存在浏览器本地，不上传、不联网、不经过任何服务端。
+  </p>
+</header>
+
+<h2>包里一张图都没有</h2>
+<p class="lede">
+  v1.1 的包 655 KB 里 <b>85% 是五张 base64 图</b>（一张立绘 + 四张壁纸）。那些是《尼尔：机械纪元》的
+  美术资源，随 MIT 包分发等于把它们再授权出去——作者没有这个权利。所以 v2.0 全部拆掉，
+  场景改成纯 CSS 画。
+</p>
+<div class="stack">
+  <div class="box">
+    <h3>v1.1 · 655 KB</h3>
+    <p>代码 96 KB ＋ <b>五张 base64 图 558 KB</b>。图是随包分发的，而包里只有一份 MIT 许可。</p>
+  </div>
+  <div class="box">
+    <h3>v2.0 · 91 KB</h3>
+    <p>只有代码与 CSS，<b>图片 0 张</b>。场景用渐变和遮罩画，壁纸由使用者自己上传。</p>
+  </div>
+</div>
+
+<h2>面板长这样</h2>
+<div class="full">
+  <figure><img src="_shots/panel-zero.png" alt="壁纸面板：主背景 / 左下图版 / 遮罩"></figure>
+</div>
+<p class="lede" style="margin-top:12px">
+  三行：<b>主背景</b>、<b>左下图版</b>、<b>遮罩</b>。前两行各两个按钮：<code>选择</code> 与 <code>关</code>。
+  控制坞读数跟着走：<code>W:U</code> 自选 / <code>W:-</code> 空。
+</p>
+
+<h2>每个位置两种状态</h2>
+<table>
+  <thead><tr><th>状态</th><th>存的值</th><th>面板按钮</th><th>看到什么</th></tr></thead>
+  <tbody>
+    <tr><td>空</td><td>没有这个键，或 <code>"off"</code></td><td><code>关</code>（禁用态）</td><td>什么都不画，露出废墟场景</td></tr>
+    <tr><td>自选</td><td><code>data:image/…</code></td><td><code>选择</code></td><td>自己上传的图</td></tr>
+  </tbody>
+</table>
+<p class="lede" style="margin-top:12px">
+  没有「默认」这一态，因为<b>没有出厂图可回</b>。空位就是空位，<code>关</code> 等于清空。
+</p>
+
+<h2>什么都不放，就是场景</h2>
+<div class="grid">
+  <div>
+    <p class="cap"><b>深色</b><span class="tag">遮罩 70%</span></p>
+    <figure><img src="_shots/scene-dark.png" alt="深色场景"></figure>
+  </div>
+  <div>
+    <p class="cap"><b>浅色</b><span class="tag">遮罩 74%</span></p>
+    <figure><img src="_shots/scene-light.png" alt="浅色场景"></figure>
+  </div>
+</div>
+<p class="lede" style="margin-top:14px">
+  右下角那条天际线是<b>一条 1 KB 的 SVG 路径当 <code>mask-image</code></b>，颜色由 CSS 给——
+  所以明暗两套共用一个遮罩，不用为浅色再存一张图。再叠地平线渐变、两层雾和飘灰粒子。
+  这是主题唯一「自带」的画面，而且它不含任何第三方图形。
+</p>
+
+<h2>遮罩：为什么必须有，以及 70% 这个数</h2>
+<div class="stack">
+  <div class="box">
+    <h3>它挡在照片和正文之间</h3>
+    <p>照片是 <code>body</code> 子元素、<code>z-index:-3</code>；遮罩 <code>-2</code>；场景 <code>0</code>；
+      界面在更上面。正文永远坐在遮罩之上，所以调的是「背景有多亮」，不是「字有多清楚」。</p>
+  </div>
+  <div class="box">
+    <h3>70% 是测出来的</h3>
+    <p>拿两张亮度差很大的图各测一遍（把文字涂透明再截一张，逐像素比，只取笔画内部、排除 1px 分隔线）：
+      暗的 p50 11.1:1 / p10 4.4:1，亮的 p50 8.8:1 / p10 4.4:1——都压在 AA 线上。
+      你放的图如果亮部特别大，把滑杆往右拉一档就够了。</p>
+  </div>
+</div>
+
+<h2>层序</h2>
+<table>
+  <thead><tr><th>z</th><th>层</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>−3</td><td>壁纸照片</td><td><code>#dsh-skin-nier-wp</code>，fixed 铺满，<code>cover</code></td></tr>
+    <tr><td>−2</td><td>遮罩</td><td><code>#dsh-skin-nier-wpveil</code>，<code>--nier-veil</code></td></tr>
+    <tr><td>0</td><td>场景</td><td><code>#dsh-skin-nier-scene</code>：天际线、地平线、雾、粒子</td></tr>
+    <tr><td>1</td><td>左下图版</td><td><code>#dsh-skin-nier-plate</code>，2:3</td></tr>
+    <tr><td>9997</td><td>控制坞 + 面板</td><td>W 键开合，可拖动，位置也记在 localStorage</td></tr>
+  </tbody>
+</table>
+
+<h2>真机里为什么曾经完全看不见</h2>
+<div class="stack">
+  <div class="box">
+    <h3>外壳是一摞盒子，不是一层</h3>
+    <p>照片层挂上了、data URL 也在，背景却是一块纯色。宿主给外壳的<b>每一层</b>都写了底色：
+      <code>.frame</code>（外层，Windows 实心 / macOS 透明）→ <code>.centerCol</code> /
+      <code>.bottomRow</code> / <code>.sidebarCol</code> → 会话页根节点。照片是 <code>body</code> 的子元素、
+      <code>z-index:-3</code>，被<b>整摞</b>盖住——漏任何一层，症状都一模一样。</p>
+  </div>
+  <div class="box">
+    <h3>为什么预览页一直正常</h3>
+    <p>预览里的深色来自 <code>#dsh-skin-nier-scene</code>（<code>z-index:0</code>，是 <code>body</code> 的<b>子元素</b>），
+      照片在它下面但仍在 <code>body</code> 底色之上；而且预览页根本没有宿主这些盒子。
+      <b>预览能显示 ≠ 真机能显示。</b></p>
+  </div>
+</div>
+
+<div class="grid">
+  <div>
+    <p class="cap"><b>修之前</b><span class="tag">BLOCKED by frame,page</span></p>
+    <figure><img src="_shots/repro2-before.png" alt="修复前：照片挂上了但被整摞底色盖住"></figure>
+  </div>
+  <div>
+    <p class="cap"><b>修之后</b><span class="tag">VISIBLE · 五层全透明</span></p>
+    <figure><img src="_shots/repro2-after.png" alt="修复后：照片透出来了"></figure>
+  </div>
+</div>
+
+<p class="lede" style="margin-top:14px">
+  两张都是 <code>preview/_repro-host.html</code>：按 <code>app.asar</code> 里的原样重建了整摞壳
+  （类名带哈希前缀、含 <code>#root</code>、含会话页根节点），加载真的 <code>lib/client.js</code>，
+  右上角直接给出 <code>VISIBLE</code> 或 <code>BLOCKED by …</code>。修法是照片开着时让整摞底色让位，
+  压暗交还给本来就该干这事的遮罩：
+</p>
+<pre style="margin:12px 0 0;padding:14px 16px;background:#1c1f24;color:#e6ebf2;border-radius:3px;overflow-x:auto;font:400 12px/1.7 var(--mono)">body.nier-wp-user [class*='centerCol'],body.nier-wp-user [class*='rightbarCol'],
+body.nier-wp-user [class*='bottomRow'],body.nier-wp-user [class*='sidebarCol'],
+body.nier-wp-user [class*='_frame'],body.nier-wp-user [class*='_root'],
+body.nier-wp-user [class*='_page'],body.nier-wp-user [class*='_screen'],
+body.nier-wp-user [class*='_mainPanel']{background-color:transparent}</pre>
+<p class="lede" style="margin-top:12px">
+  选择器用<b>子串匹配</b>而不是全名，因为宿主给类名加了每次构建都可能变的前缀（今天是 <code>mP3x-q_centerCol</code>，
+  明天未必），只有 <code>_name</code> 尾巴稳定。特异性 <code>(0,2,1)</code> 已经压过宿主的 <code>(0,1,0)</code>，
+  不需要 <code>!important</code>。
+</p>
+<div class="note">
+  <b>1.1.0 只修了一半：</b>那次只清了四个列，漏掉包住它们的 <code>.frame</code>，而且读到的是
+  <code>[data-platform=darwin]</code> 那条「frame 透明」的规则（Windows 上它是实心的）。症状与完全没修一样，
+  看起来像「修了没用」。现在的兜底是<b>不依赖类名</b>的：照片开着时沿内容主轴
+  （<code>#root</code> → 面积最大的子元素 → …，最多 8 层）把仍不透明的整屏盒子清成透明，遇到
+  <code>position:fixed</code> 就停（那是对话框）。复现页加 <code>?inline=1</code> 会给三层写内联底色，
+  CSS 清不掉，此时仍然 <code>VISIBLE</code> —— 说明兜底真的在工作。
+</div>
+<p class="lede" style="margin-top:12px">
+  修完后在同一页重测正文对比度：p50 12.3:1 / p25 8.0:1 / p10 5.5:1（2358 个笔画内部像素）。
+</p>
+
+<p class="lede" style="margin-top:12px">
+  这两张是 1.1.0 时期拍的——那时包里还带出厂图，正好用来演示「图挂上了但被壳盖住」。
+  v2.0 拆掉素材后故障机制没变：只要放了图，就得靠同一套让位规则才能看见。
+</p>
+
+<h2>怎么用</h2>
+<ol class="steps">
+  <li>点右下角控制坞的 <b>W</b>，面板从上方展开。</li>
+  <li>想放自己的图：<b>主背景 → 选择</b>挑 16:9，<b>左下图版 → 选择</b>挑 2:3。两位互不影响。</li>
+  <li>拖 <b>遮罩</b> 滑杆调背景强度，松手即记住。</li>
+  <li>想撤掉：点 <b>关</b>。撤掉后露出的就是纯 CSS 场景。</li>
+  <li>刷新、重启 DSH 都还在——存在 localStorage，不是内存。</li>
+</ol>
+
+</div>
+</body>
+</html>

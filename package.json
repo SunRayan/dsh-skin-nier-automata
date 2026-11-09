@@ -1,0 +1,62 @@
+{
+  "name": "dsh-skin-nier-automata",
+  "version": "2.0.0",
+  "description": "A NieR-inspired theme for DeepSeek Harness — cool graphite palette, ice-white type, a pure-CSS ruined skyline with drifting ash, CRT scanlines, and a boot sequence. Ships no third-party artwork: both wallpaper slots take your own images and keep them in localStorage. · 尼尔风格主题皮肤（不含任何游戏素材）",
+  "type": "module",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "python tools/build-client.py",
+    "verify": "node tools/verify-tokens.mjs",
+    "check:lock": "node tools/check-lock.mjs",
+    "fix:lock": "python tools/fix-lock.py",
+    "status": "node tools/status.mjs",
+    "pack": "npm pack",
+    "install:desktop": "node tools/install.mjs",
+    "install:link": "node tools/install.mjs --link",
+    "prepublishOnly": "python tools/build-client.py && node tools/verify-tokens.mjs"
+  },
+  "license": "MIT",
+  "author": "SunRayan",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SunRayan/dsh-skin-nier-automata.git"
+  },
+  "homepage": "https://github.com/SunRayan/dsh-skin-nier-automata#readme",
+  "bugs": {
+    "url": "https://github.com/SunRayan/dsh-skin-nier-automata/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "dsh-skin",
+    "dsh-theme",
+    "theme",
+    "skin",
+    "nier",
+    "graphite",
+    "deepseek-harness"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-theme"
+      ],
+      "platform": "web"
+    }
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "INSTALL.md",
+    "LICENSE"
+  ]
+}

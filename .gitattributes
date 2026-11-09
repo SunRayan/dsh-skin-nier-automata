@@ -1,0 +1,17 @@
+# 换行符：仓库内统一 LF，检出时按平台转换。
+# 本机 core.autocrlf=true，不加这个文件的话每个人的工作副本换行符会不一致。
+* text=auto eol=lf
+
+# Windows 批处理必须 CRLF，否则 cmd.exe 解析会出错。
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# 图片按字节存，不能做任何换行转换。
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+
+# 打包产物同理。
+*.tgz binary

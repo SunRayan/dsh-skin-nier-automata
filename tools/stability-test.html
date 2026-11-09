@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  NieR 皮肤 · 稳定性回归测试（无头浏览器，20 条断言）
+
+  为什么需要它：这套皮肤是**装饰层**，任何一块挂不上都不该让宿主应用出错。
+  这个页面用最小的 module-loader 替身加载 lib/client.js，然后故意让主题服务、
+  requestAnimationFrame 等依赖失败，验证三件事：
+
+    1. apply() 绝不向宿主抛异常
+    2. 出问题时仍然返回可用的 disposer
+    3. 卸载后不留任何节点（否则重载会叠加多层遮罩）
+
+  跑法（Windows / Edge）：
+    "/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe" \
+      --headless=new --disable-gpu --allow-file-access-from-files \
+      --virtual-time-budget=6000 --dump-dom tools/stability-test.html \
+      | grep -c '^PASS'          # 期望 20
+-->
+<meta charset="utf-8">
+<title>NieR skin · stability harness</title>
+<style>
+  body { margin: 0; font: 13px ui-monospace, Menlo, Consolas, monospace; }
+  #result { white-space: pre; padding: 12px; }
+</style>
+<pre id="result">running…</pre>
+<div id="host" style="height:200px">host app area</div>
+<script>
+  // Minimal stand-in for the DSH module loader.
+  window.__ModuleLoader__ = { load(spec) { window.__spec = spec; } };
+  window.__log = [];
+  const origWarn = console.warn;
+  console.warn = function (...args) {
+    window.__log.push(args.map(String).join(" "));
+    origWarn.apply(console, args);
+  };
+</script>
+<script src="../lib/client.js"></script>
+<script>
+  const out = [];
+  const say = (ok, msg) => out.push((ok ? "PASS " : "FAIL ") + msg);
+
+  function runCase(name, makeCtx) {
+    window.__log.length = 0;
+    const sel = "#dsh-skin-nier-style, [id^='dsh-skin-nier']";
+    const before = document.querySelectorAll(sel).length;
+    let threw = null, disposer = null;
+    try {
+      const mod = window.__spec.factory(() => ({}));
+      mod.apply(makeCtx((d) => { disposer = d; }));
+    } catch (e) { threw = e; }
+    const after = document.querySelectorAll(sel).length;
+
+    say(!threw, `${name}: apply() 未向宿主抛异常` + (threw ? ` (${threw.message})` : ""));
+    say(typeof disposer === "function", `${name}: 仍返回了 disposer`);
+    say(after > before, `${name}: 其余部件仍已挂载 (${before} -> ${after} 个节点)`);
+    if (typeof disposer === "function") {
+      let dt = null;
+      try { disposer(); } catch (e) { dt = e; }
+      say(!dt, `${name}: disposer 未抛异常` + (dt ? ` (${dt.message})` : ""));
+      const left = document.querySelectorAll(sel).length;
+      say(left === 0, `${name}: 卸载后无残留节点 (剩 ${left})`);
+    }
+    out.push("");
+  }
+
+  // 1: theme service throws.
+  runCase("主题服务抛错", (capture) => ({
+    theme: { overrideTokens() { throw new Error("simulated theme failure"); } },
+    effect(fn) { capture(fn()); },
+  }));
+
+  // 2: theme service missing its method.
+  runCase("主题服务缺失", (capture) => ({
+    theme: { overrideTokens() { throw new TypeError("ctx.theme.overrideTokens is not a function"); } },
+    effect(fn) { capture(fn()); },
+  }));
+
+  // 3: healthy context — the full skin must mount.
+  runCase("正常环境", (capture) => ({
+    theme: { overrideTokens() { return () => {}; } },
+    effect(fn) { capture(fn()); },
+  }));
+
+  // 4: requestAnimationFrame denied (privacy mode / resource exhaustion).
+  const origRaf = window.requestAnimationFrame;
+  window.requestAnimationFrame = function () { throw new Error("simulated rAF denial"); };
+  runCase("动画帧被拒绝", (capture) => ({
+    theme: { overrideTokens() { return () => {}; } },
+    effect(fn) { capture(fn()); },
+  }));
+  window.requestAnimationFrame = origRaf;
+
+  out.push("warnings captured: " + window.__log.length);
+  window.__log.slice(0, 6).forEach((w) => out.push("  · " + w));
+  document.getElementById("result").textContent = out.join("\n");
+</script>

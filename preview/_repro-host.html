@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>宿主外壳复现 · 壁纸可见性</title>
+<!--
+  复现真实 DSH（Windows）的外壳。规则全部从 app.asar 里抄出来，注意 frame 那一条：
+
+    .mP3x-q_frame      { background: var(--dsw-alias-bg-base) }   ← 外层，Windows 不透明
+    [data-platform=darwin] .mP3x-q_frame { background: 0 0 }      ← macOS 才透明
+    [data-windows-titlebar] .mP3x-q_frame { background: var(--dsw-specific-sidebar-fill) }
+    [data-windows-titlebar] .mP3x-q_centerCol { background: var(--dsw-alias-bg-base) }
+    .mP3x-q_bottomRow  { background: var(--dsw-alias-bg-base) }
+    .mP3x-q_sidebarCol { background: var(--dsw-specific-sidebar-fill) }
+    .mP3x-q_rightbarCol{ background: var(--dsw-alias-bg-base) }    ← 仅 darwin
+    .an3WzG_root       { background: var(--dsw-alias-bg-base) }    ← 会话页根节点，也有一层
+
+  照片层 #dsh-skin-nier-wp 是 body 子元素、z-index:-3，排在 #root 之后绘制，
+  所以只要这条链上**任何一层**不透明，整块照片就被盖死。这个页面把整条链摆出来，
+  让「看不见」可以被像素采样证明，也让「修好了」可以被证明。
+-->
+<style>
+  html,body,#root{height:100%;margin:0}
+  /* 宿主运行时注入：body{background-color:${DARK_BACKGROUND}} */
+  body{background-color:#111419;font:400 14px/1.7 'Segoe UI','Microsoft YaHei',sans-serif;color:#e4e9f0}
+
+  /* —— 以下六条与 app.asar 逐字对应（前缀哈希用真值，用来验子串匹配） —— */
+  .mP3x-q_frame{
+    box-sizing:border-box;height:100%;display:grid;position:relative;overflow:hidden;
+    grid-template-columns:220px minmax(0,1fr) 300px;
+    grid-template-rows:minmax(0,1fr) auto;
+    background:var(--dsw-alias-bg-base);
+  }
+  .mP3x-q_sidebarCol{grid-area:1/1;background:var(--dsw-specific-sidebar-fill);overflow:hidden}
+  .mP3x-q_centerCol{
+    grid-area:1/2;min-width:0;overflow:hidden;display:flex;flex-direction:column;
+    background:var(--dsw-alias-bg-base);
+  }
+  .mP3x-q_mainPanel{flex-direction:column;flex:1;min-width:0;min-height:0;display:flex}
+  .mP3x-q_rightbarCol{grid-area:1/3;background:var(--dsw-alias-bg-base);overflow:visible}
+  .mP3x-q_bottomRow{grid-column:1/-1;background:var(--dsw-alias-bg-base);overflow:auto}
+  .an3WzG_root{background:var(--dsw-alias-bg-base);flex-direction:column;min-width:0;height:100%;display:flex;position:relative}
+
+  /* —— 页面自身的排版，只为可读 —— */
+  .pad{padding:18px 22px}
+  h1{font:600 15px/1.5 inherit;margin:0 0 10px}
+  p{margin:0 0 12px;color:var(--dsw-alias-label-secondary,#a9b2c0)}
+  code{font:400 12px/1 ui-monospace,Consolas,monospace;background:rgba(255,255,255,.06);padding:2px 5px;border-radius:2px}
+  .tag{display:inline-block;font:500 10px/1 ui-monospace,monospace;letter-spacing:.18em;
+       text-transform:uppercase;color:#a3262e;border:1px solid rgba(163,38,46,.4);padding:3px 6px;margin-bottom:14px}
+  #verdict{position:fixed;right:12px;top:12px;z-index:99999;font:500 11px/1.5 ui-monospace,monospace;
+           padding:8px 12px;border-radius:3px;background:#000;color:#fff;border:1px solid #333;max-width:640px}
+  #verdict b{color:#7dff9b;font-weight:500}
+  #verdict .bad{color:#ff8a8a}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="mP3x-q_frame" data-probe="frame">
+    <div class="mP3x-q_sidebarCol pad" data-probe="side">
+      <div class="tag">Sessions</div>
+      <p style="font-size:12.5px">侧栏：<code>sidebar-fill</code>，不透明</p>
+    </div>
+    <div class="mP3x-q_centerCol" data-probe="center">
+      <div class="mP3x-q_mainPanel" data-probe="main">
+        <div class="an3WzG_root pad" data-probe="page">
+          <div class="tag">System / Reproduce</div>
+          <h1>阅读区：整条链都不透明</h1>
+          <p>这块区域在真实 DSH 里叠了三层底色：<code>.mP3x-q_frame</code>（外层）、
+            <code>.mP3x-q_centerCol</code>（标题栏模式下）、<code>.an3WzG_root</code>（会话页根节点）。
+            壁纸层挂在 <code>body</code> 上、<code>z-index:-3</code>，排在 <code>#root</code> 之后绘制——
+            所以照片被这一串底色整块盖住，一个像素都露不出来。</p>
+          <p>同时主题在 <code>body.nier-wp-user</code> 上把城市剪影、地面梯度、天空梯度全部撤掉了，
+            于是背景变成一片纯色：既没有照片，也没有废墟。</p>
+          <p>右下角那行 JSON 是实测值：三层都必须是 <code>rgba(0, 0, 0, 0)</code> 照片才算真的透出来。</p>
+        </div>
+      </div>
+    </div>
+    <div class="mP3x-q_rightbarCol pad" data-probe="right">
+      <div class="tag">Settings</div>
+      <p style="font-size:12.5px">右栏</p>
+    </div>
+    <div class="mP3x-q_bottomRow pad" data-probe="bottom">
+      <p style="font-size:12.5px;margin:0">输入区：<code>bottomRow</code></p>
+    </div>
+  </div>
+</div>
+
+<div id="verdict">measuring…</div>
+
+<script>
+/* ?inline=1：给三层壳写**内联**底色。内联样式压过任何不带 !important 的 CSS，
+   等价于「宿主新增了一层我们选择器够不到的底色」——这时只有运行时清扫能救。
+   （不要用「改类名」来测：类名一换宿主那条规则自己就不生效了，测不出东西。） */
+if (new URLSearchParams(location.search).get('inline') === '1') {
+  ['frame', 'center', 'page'].forEach(function(name){
+    var el = document.querySelector('[data-probe="' + name + '"]');
+    if (el) el.style.backgroundColor = 'rgb(17,20,25)';
+  });
+}
+</script>
+<script>window.__ModuleLoader__={load:function(s){window.__spec=s;}};console.warn=function(){};</script>
+<script src="../lib/client.js"></script>
+<script>
+(function(){
+  var mode = new URLSearchParams(location.search).get('mode') === 'light' ? 'light' : 'dark';
+  var tokensStyle = document.createElement('style');
+  tokensStyle.id = 'token-overrides';
+  document.head.appendChild(tokensStyle);
+
+  function paint(){
+    document.body.toggleAttribute('data-ds-dark-theme', mode === 'dark');
+    var decls = Object.keys(window.__mod.TOKENS).map(function(k){
+      var v = window.__mod.TOKENS[k];
+      return k + ':' + (mode === 'dark' ? v.dark : v.light) + ';';
+    }).join('');
+    tokensStyle.textContent = 'body{' + decls + '}';
+  }
+
+  window.__mod = window.__spec.factory(function(){ return {}; });
+  window.__mod.apply({
+    theme:{ overrideTokens:function(){ paint(); return function(){}; } },
+    effect:function(fn){ return fn(); }
+  });
+  var boot = document.getElementById('dsh-skin-nier-boot'); if (boot) boot.remove();
+
+  /* Report what actually reached the DOM, so the screenshot is not the only evidence. */
+  setTimeout(function(){
+    var wp = document.getElementById('dsh-skin-nier-wp');
+    var veil = document.getElementById('dsh-skin-nier-wpveil');
+    var g = function(name){
+      var el = document.querySelector('[data-probe="' + name + '"]');
+      return el ? getComputedStyle(el).backgroundColor : 'missing';
+    };
+    var layers = {
+      frame: g('frame'), center: g('center'), page: g('page'),
+      side: g('side'), bottom: g('bottom')
+    };
+    var opaque = Object.keys(layers).filter(function(k){ return layers[k] !== 'rgba(0, 0, 0, 0)'; });
+    var out = {
+      user: document.body.classList.contains('nier-wp-user'),
+      wpZ: wp ? getComputedStyle(wp).zIndex : 'none',
+      wpHasImage: wp ? (getComputedStyle(wp).backgroundImage || 'none').slice(0, 22) : 'none',
+      veil: veil ? getComputedStyle(veil).opacity : 'none',
+      layers: layers,
+      opaque: opaque,
+      inlined: new URLSearchParams(location.search).get('inline') === '1',
+      verdict: opaque.length === 0 ? 'VISIBLE' : 'BLOCKED by ' + opaque.join(',')
+    };
+    var box = document.getElementById('verdict');
+    box.innerHTML = '';
+    box.appendChild(document.createTextNode(JSON.stringify(out)));
+    var tag = document.createElement('div');
+    tag.style.marginTop = '4px';
+    tag.innerHTML = '<b>verdict</b> ' + (opaque.length === 0
+      ? '<b>' + out.verdict + '</b>'
+      : '<span class="bad">' + out.verdict + '</span>');
+    box.appendChild(tag);
+  }, 1200);
+})();
+</script>
+</body>
+</html>

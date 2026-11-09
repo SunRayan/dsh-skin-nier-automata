@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>角色层移除 · 前后对照</title>
+<style>
+  :root{
+    --ink:#1c1f24; --ink-2:#4e535a; --ink-3:#8a857c;
+    --paper:#f8f6f0; --line:rgba(28,31,36,.14); --red:#a3262e;
+    --mono:'Cascadia Mono',Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font:400 14px/1.75 'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+    padding:40px 44px 72px}
+  header{max-width:1180px;margin:0 auto 34px;border-bottom:1px solid var(--line);padding-bottom:22px}
+  .eyebrow{font:500 10.5px/1 var(--mono);letter-spacing:.24em;color:var(--red);text-transform:uppercase}
+  h1{margin:12px 0 10px;font:400 28px/1.3 inherit;letter-spacing:.01em}
+  .lede{margin:0;color:var(--ink-2);max-width:74ch}
+  .lede b{font-weight:500;color:var(--ink)}
+  .grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:26px 24px}
+  .cell{min-width:0}
+  .cap{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;
+    font:500 10.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+  .cap b{color:var(--ink);font-weight:500;letter-spacing:.06em;font-size:12px}
+  .cap .tag{margin-left:auto;padding:2px 6px;border:1px solid var(--line);border-radius:2px;letter-spacing:.1em}
+  .cap .tag.old{color:var(--ink-3)}
+  .cap .tag.new{color:var(--red);border-color:rgba(163,38,46,.34)}
+  figure{margin:0;border:1px solid var(--line);background:#000;overflow:hidden;border-radius:2px}
+  figure img{display:block;width:100%;height:auto}
+  .full{max-width:1180px;margin:0 auto}
+  h2{max-width:1180px;margin:46px auto 16px;font:500 15px/1.4 inherit;letter-spacing:.02em}
+  .facts{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .fact{background:#fff;border:1px solid var(--line);border-radius:3px;padding:14px 16px}
+  .fact .k{font:500 10.5px/1 var(--mono);letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase}
+  .fact .v{margin-top:8px;font:400 22px/1.1 inherit}
+  .fact .v small{font-size:12px;color:var(--ink-3);margin-left:3px}
+  .fact .n{margin-top:6px;font-size:12px;color:var(--ink-2);line-height:1.55}
+  ul.removed{max-width:1180px;margin:0 auto;padding:0;list-style:none;
+    columns:2;column-gap:40px}
+  ul.removed li{padding:7px 0;border-bottom:1px solid var(--line);color:var(--ink-2);break-inside:avoid}
+  ul.removed li b{font-weight:500;color:var(--ink)}
+  .note{max-width:1180px;margin:26px auto 0;padding:16px 18px;border-left:2px solid var(--red);
+    background:rgba(163,38,46,.045);color:var(--ink-2)}
+  .note b{color:var(--ink);font-weight:500}
+  code{font:400 12px/1 var(--mono);background:rgba(28,31,36,.06);padding:2px 5px;border-radius:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Character layer · removal</div>
+  <h1>两个角色层已移除：从「两个主体」回到「一张纸」</h1>
+  <p class="lede">
+    判断依据不是观感，是几何：右栏设置面板宽 <b>286px</b> 且占满整高（y 48→900）。
+    她的框是 <b>378 × 615</b>，从 x 1062 起——<b>76% 的面积在面板后面</b>，露出来的只有 92px。
+    任何尺寸都逃不掉这个结构：再大，遮得更多；小到不被遮，就只剩 92px 宽的暗斑。
+    左侧 A2 占掉侧栏 <b>88%</b> 的宽度，且在浅色下是全彩照片＋白框，是整页最重的物体，却落在最不重要的那一列。
+  </p>
+</header>
+
+<div class="grid">
+  <div class="cell">
+    <p class="cap"><b>深色 · 之前</b><span class="tag old">2 个角色</span></p>
+    <figure><img src="_shots/v-cur-dark.png" alt="深色模式，含两个角色"></figure>
+  </div>
+  <div class="cell">
+    <p class="cap"><b>深色 · 之后</b><span class="tag new">0 个角色</span></p>
+    <figure><img src="_shots/new-dark.png" alt="深色模式，无角色"></figure>
+  </div>
+  <div class="cell">
+    <p class="cap"><b>浅色 · 之前</b><span class="tag old">2 个角色</span></p>
+    <figure><img src="_shots/v-cur-light.png" alt="浅色模式，含两个角色"></figure>
+  </div>
+  <div class="cell">
+    <p class="cap"><b>浅色 · 之后</b><span class="tag new">0 个角色</span></p>
+    <figure><img src="_shots/new-light2.png" alt="浅色模式，无角色"></figure>
+  </div>
+</div>
+
+<h2>顺带修掉的一个真缺陷</h2>
+<div class="full">
+  <p class="lede" style="margin-bottom:18px">
+    移除角色后，浅色画面那片灰雾才露出来。它来自 <code>.nier-wallpaper</code>——暗色预设的“废土地面”，
+    一条 <code>rgba(16,20,28,.94)</code> 的底部渐变。<b>它从来没有浅色覆盖规则</b>，等于在纸上刷了 94% 的黑。
+    现在补了一套同结构、约 1/9 强度的浅色版本：地面还在，暖红晕还在，但纸还是纸。
+  </p>
+</div>
+<div class="facts">
+  <div class="fact">
+    <div class="k">浅色最暗 5%</div>
+    <div class="v">82 → 189</div>
+    <div class="n">L 值。灰雾移除后，页面的暗部下限抬了 107 级，纸上不再有脏污。</div>
+  </div>
+  <div class="fact">
+    <div class="k">浅色主明度带</div>
+    <div class="v">28.4% → 38.4%</div>
+    <div class="n">更集中在中性纸色，符合“文档”而非“风景”的读法。</div>
+  </div>
+  <div class="fact">
+    <div class="k">深色主明度带</div>
+    <div class="v">71.7% → 75.8%</div>
+    <div class="n">反而更平了——她原本是画面里唯一的中调。暗色的层次问题因此更迫切。</div>
+  </div>
+  <div class="fact">
+    <div class="k">包体</div>
+    <div class="v">383 → 300<small>KB</small></div>
+    <div class="n">少了一条 53 KB 的 A2 图与 14.6 KB 样式/脚本。</div>
+  </div>
+</div>
+
+<h2>删掉的东西</h2>
+<ul class="removed">
+  <li><b>2 个 DOM 节点</b>：<code>#dsh-skin-nier-figure</code>、<code>#dsh-skin-nier-a2</code></li>
+  <li><b>双向复合遮罩</b>：两层 mask 取交集，只为了把她“溶”进文字区</li>
+  <li><b>三节动画骨架</b>：drift 41s / sway 24s / breath 5.6s，叠加在一个 2D 裁切图上</li>
+  <li><b>指针视差</b>：她只动 6px，且大半在面板后，肉眼不可见</li>
+  <li><b><code>nier-near</code> 交互</b>：光标进入右侧 38% 就整场提亮——无提示、无反馈、触发区过大</li>
+  <li><b>5 组关键帧</b>：sway / breath / drift / sheen / shadow</li>
+  <li><b>Pod 无人机</b>：<code>.nier-pod</code> 及 3 条伪元素规则</li>
+  <li><b>浅色照片框</b>：白卡＋ARCHIVE 角标＋TYPE-A 编号</li>
+</ul>
+
+<div class="note">
+  <b>保留：</b>开屏诊断框里的角色（<code>.nier-boot-char</code>）没动。那里她是居中、完整、有理由出现的——
+  角色该活在启动画面，不该活在阅读画面。NieR 原作也是如此。
+</div>
+
+</body>
+</html>

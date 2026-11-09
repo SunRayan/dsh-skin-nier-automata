@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>开屏诊断框 · 8 格进度 + 零位移状态方块</title>
+<style>
+:root{
+  --mono:'Cascadia Mono','Cascadia Code',Consolas,'SF Mono',Menlo,monospace;
+  --body:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  --red:#a3262e; --red-b:#d2454e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#0b0d10;color:#e8e8ea;font:400 13px/1.6 var(--body)}
+
+/* page chrome */
+.page{max-width:1100px;margin:0 auto;padding:24px 24px 60px}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+  border-bottom:1px solid rgba(230,235,242,.18);padding-bottom:13px;margin-bottom:20px;flex-wrap:wrap}
+.eyebrow{font:500 10px/1 var(--mono);letter-spacing:.2em;color:var(--red-b);text-transform:uppercase;margin-bottom:8px}
+h1{font:500 20px/1.3 var(--body);margin:0}
+.sub{color:#98a1ad;font-size:12px;margin-top:5px;max-width:600px}
+.ctrls{display:flex;border:1px solid rgba(230,235,242,.22);background:rgba(255,255,255,.03)}
+.ctrls button{background:transparent;border:0;color:#98a1ad;font:500 10.5px/1 var(--mono);
+  letter-spacing:.1em;padding:9px 13px;cursor:pointer;text-transform:uppercase}
+.ctrls button+button{border-left:1px solid rgba(230,235,242,.18)}
+.ctrls button[aria-pressed=true]{background:rgba(163,38,46,.30);color:#fff}
+
+/* ── stage: a black boot surface ── */
+.stage{position:relative;background:#000;border:1px solid rgba(230,235,242,.18);
+  padding:40px 44px 44px;min-height:430px;overflow:hidden}
+.stage .vig{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 42%,transparent 55%,rgba(0,0,0,.7) 100%)}
+.stage .scan{position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 4px);
+  mix-blend-mode:multiply;opacity:.5}
+.stage .cb{position:absolute;width:26px;height:26px;border:2px solid var(--red);pointer-events:none}
+.stage .cb.tl{top:12px;left:12px;border-right:0;border-bottom:0}
+.stage .cb.tr{top:12px;right:12px;border-left:0;border-bottom:0}
+.stage .cb.bl{bottom:12px;left:12px;border-right:0;border-top:0}
+.stage .cb.br{bottom:12px;right:12px;border-left:0;border-top:0}
+
+/* ── THE BOOT LOG BOX (verbatim from src/client.template.js) ── */
+.nier-boot-log{position:relative;z-index:20;width:min(360px,46vw);border:1px solid rgba(255,255,255,.22);
+  background:rgba(0,0,0,.4);padding:16px 20px;font-size:14px;letter-spacing:.02em;
+  font-family:var(--mono)}
+.log-h{color:#d2454e;font-weight:500;letter-spacing:.12em;font-size:12px;display:flex;
+  align-items:center;gap:9px;margin-bottom:12px;border-bottom:1px solid rgba(163,38,46,.35);padding-bottom:8px}
+.log-h .dot{width:6px;height:6px;background:var(--red)}
+.ln{display:flex;align-items:baseline;gap:6px;line-height:1.8;color:#9aa0a6}
+.ln .k{color:#b9bec4;white-space:nowrap}
+.ln .dots{flex:1;border-bottom:1px dotted rgba(255,255,255,.28);transform:translateY(-3px);min-width:14px}
+.ln .v{color:#e8e8ea;white-space:nowrap;font-weight:600}
+
+/* ── load row ── */
+.nier-boot-load{position:relative;z-index:20;margin-top:34px;display:flex;align-items:center;gap:14px;
+  font-size:12px;letter-spacing:.22em;color:#9aa0a6;font-family:var(--mono)}
+.nier-boot-load .lbl{white-space:nowrap}
+.nier-boot-bar{width:min(360px,44vw);height:6px;border:1px solid rgba(255,255,255,.45);
+  position:relative;overflow:hidden;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 7px,transparent 7px 9px)}
+.nier-boot-bar i{position:absolute;left:0;top:0;bottom:0;width:0%;
+  background:var(--red);box-shadow:inset 0 1px 0 rgba(255,255,255,.22);
+  transition:width .24s linear}
+.nier-boot-pct{color:#e8e8ea;min-width:46px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* ── AFTER: 8-cell segmentation + zero-shift state squares ── */
+body.after .nier-boot-bar{height:8px;
+  background-image:repeating-linear-gradient(90deg,
+    rgba(255,255,255,.085) 0 calc(12.5% - 2px),transparent calc(12.5% - 2px) 12.5%)}
+body.after .nier-boot-bar::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(90deg,
+    transparent 0 calc(12.5% - 2px),#000 calc(12.5% - 2px) 12.5%)}
+body.after .nier-boot-bar i{box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset -1px 0 0 rgba(255,255,255,.62)}
+body.after .ln{position:relative}
+body.after .ln::before{content:'';position:absolute;left:-12px;top:50%;width:5px;height:5px;
+  margin-top:-2.5px;background:var(--red)}
+
+/* controls under stage */
+.row2{display:flex;align-items:center;gap:12px;margin-top:14px}
+.row2 button{background:transparent;border:1px solid rgba(230,235,242,.28);color:#c8ced6;
+  font:500 10.5px/1 var(--mono);letter-spacing:.12em;padding:9px 14px;cursor:pointer;text-transform:uppercase}
+.row2 button:hover{border-color:var(--red-b);color:#fff}
+.hint{color:#7d8590;font-size:11.5px}
+
+/* notes */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+@media (max-width:880px){.cards{grid-template-columns:1fr}}
+.card{border:1px solid rgba(230,235,242,.18);background:rgba(255,255,255,.025);padding:16px 18px}
+.card h3{font:500 10px/1 var(--mono);letter-spacing:.18em;color:var(--red-b);text-transform:uppercase;margin:0 0 10px}
+.card ul{margin:0;padding-left:15px;color:#9aa1ac;font-size:12px}
+.card li{margin:6px 0}
+.card b{color:#e8e8ea;font-weight:500}
+.mono{font-family:var(--mono);font-size:11px;color:#c3cad3}
+</style>
+</head>
+<body class="after">
+<div class="page">
+
+  <div class="top">
+    <div>
+      <div class="eyebrow">Boot diagnostic / 8-cell progress</div>
+      <h1>开屏诊断框：8 格离散进度 + 零位移状态方块</h1>
+      <div class="sub">把 T1-c 的方块语汇延伸到开屏层。两条改动都不参与 flex 布局：日志方块落在 20px 内边距里，进度条格子是伪元素覆盖层。</div>
+    </div>
+    <div class="ctrls">
+      <button data-v="before" aria-pressed="false">原状</button>
+      <button data-v="after" aria-pressed="true">T1-c 收尾</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <span class="cb tl"></span><span class="cb tr"></span><span class="cb bl"></span><span class="cb br"></span>
+    <div class="vig"></div>
+
+    <div class="nier-boot-log">
+      <div class="log-h"><span class="dot"></span>SYSTEM CHECK</div>
+      <div class="ln"><span class="k">YO-RHA OS</span><span class="dots"></span><span class="v">INIT</span></div>
+      <div class="ln"><span class="k">NEURAL LINK</span><span class="dots"></span><span class="v">OK</span></div>
+      <div class="ln"><span class="k">WEAPON SYS</span><span class="dots"></span><span class="v">READY</span></div>
+      <div class="ln"><span class="k">POD 042</span><span class="dots"></span><span class="v">SYNC</span></div>
+      <div class="ln"><span class="k">DEEPSEEK CORE</span><span class="dots"></span><span class="v">LINKED</span></div>
+    </div>
+
+    <div class="nier-boot-load">
+      <span class="lbl">NOW LOADING</span>
+      <div class="nier-boot-bar"><i id="fill"></i></div>
+      <span class="nier-boot-pct" id="pct">00%</span>
+    </div>
+
+    <div class="scan"></div>
+  </div>
+
+  <div class="row2">
+    <button id="replay">重播进度</button>
+    <span class="hint" id="seg">8 格 · 每格 12.5% · 2px 分隔</span>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>为什么零位移</h3>
+      <ul>
+        <li><b>日志方块</b>：<span class="mono">.ln</span> 加 <span class="mono">position:relative</span>（不改盒模型），<span class="mono">::before</span> 绝对定位到 <span class="mono">left:-12px</span>。盒子有 20px 左内边距，所以方块落在内边距里，<b>完全不参与 flex 排列</b>，不会推右文字。</li>
+        <li><b>进度格子</b>：分隔线是 <span class="mono">.nier-boot-bar::after</span> 覆盖层，格子底纹是 <span class="mono">background-image</span>。都不占布局空间，所以 <span class="mono">i</span> 的宽度百分比语义不变。</li>
+        <li><b>免费联动</b>：方块不需要单独动画。父行 <span class="mono">opacity:0→1</span> 时，子伪元素跟着淡入，正好是「这一项检查通过」的节奏。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>为什么是 8 格</h3>
+      <ul>
+        <li>进度条宽 <span class="mono">min(360px,44vw)</span>，8 等分后每格约 45px，2px 分隔在视觉上刚好读得出「格」而不碎。</li>
+        <li>与皮肤的 4px 栅格同源：8 格 = 每格 12.5%，整数百分比落点与 <span class="mono">00/12/25/37/50/62/75/87/100</span> 对齐。</li>
+        <li>高度 6→8px：原先 6px 减去上下各 1px 边框只剩 4px，7px 条纹完全糊掉；8px 才有空间让格子和描边各自成立。</li>
+        <li>填充右缘加 <span class="mono">inset -1px 0 0</span> 高光，让「当前格」有一道亮的边界。</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var q=new URLSearchParams(location.search);
+  var body=document.body;
+  function setV(v){
+    body.classList.toggle('after',v!=='before');
+    [].forEach.call(document.querySelectorAll('[data-v]'),function(b){
+      b.setAttribute('aria-pressed',String(b.getAttribute('data-v')===v));
+    });
+    document.getElementById('seg').textContent = v==='before'
+      ? '6px 高 · 7px 条纹 · 无分隔'
+      : '8 格 · 每格 12.5% · 2px 分隔';
+  }
+  [].forEach.call(document.querySelectorAll('[data-v]'),function(b){
+    b.addEventListener('click',function(){ setV(b.getAttribute('data-v')); });
+  });
+
+  var fill=document.getElementById('fill'), pct=document.getElementById('pct'), raf=0, t0=null, DUR=2600;
+  function frame(ts){
+    if(!t0) t0=ts;
+    var k=Math.min(1,(ts-t0)/DUR), p=Math.floor(k*100);
+    pct.textContent=(p<10?'0':'')+p+'%';
+    fill.style.width=p+'%';
+    if(k<1) raf=requestAnimationFrame(frame);
+  }
+  document.getElementById('replay').addEventListener('click',function(){
+    if(raf) cancelAnimationFrame(raf);
+    t0=null; fill.style.width='0%'; pct.textContent='00%';
+    raf=requestAnimationFrame(frame);
+  });
+
+  setV(q.get('v')==='before'?'before':'after');
+  /* ?p=62 freezes the bar at an exact percentage so screenshots are deterministic */
+  var frozen=q.get('p');
+  if(frozen!==null){
+    var pv=Math.max(0,Math.min(100,parseInt(frozen,10)||0));
+    fill.style.width=pv+'%';
+    pct.textContent=(pv<10?'0':'')+pv+'%';
+  } else {
+    raf=requestAnimationFrame(frame);
+  }
+})();
+</script>
+</body>
+</html>

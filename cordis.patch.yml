@@ -1,0 +1,6 @@
+# dsh bundle patch: inserts this skin into a profile's layer stack.
+# The `name` must equal the package name — dsh-client-modules resolves a
+# client plugin's `package.json#dsh.client` by package name, not by path.
+- insert:
+    - id: dsh-skin-nier-automata
+      name: 'dsh-skin-nier-automata'

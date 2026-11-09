@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>视觉修正对比 · 主角尺寸 / 红色分级</title>
+<style>
+  :root{
+    --paper:#f2efe8; --ink:#1c1f24; --ink2:#5c6167; --ink3:#8a857c;
+    --line:rgba(26,28,31,.16); --red:#a3262e; --stage:#111419;
+    --mono:'Cascadia Mono','Cascadia Code',Consolas,'SF Mono',Menlo,monospace;
+    --sans:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;
+    -webkit-font-smoothing:antialiased}
+
+  /* ── page chrome ─────────────────────────────────────────── */
+  .wrap{max-width:1180px;margin:0 auto;padding:40px 28px 80px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:34px;
+    display:flex;flex-wrap:wrap;align-items:flex-end;gap:20px}
+  h1{font-size:22px;font-weight:600;margin:0;letter-spacing:.01em}
+  h1 .sub{display:block;font-size:11px;font-family:var(--mono);letter-spacing:.18em;
+    color:var(--ink3);font-weight:400;margin-top:6px;text-transform:uppercase}
+  .ctrl{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctrl label{font:11px var(--mono);letter-spacing:.1em;color:var(--ink2);text-transform:uppercase}
+  input[type=range]{width:150px;accent-color:var(--red)}
+  .seg{display:flex;border:1px solid var(--ink)}
+  .seg button{font:11px var(--mono);letter-spacing:.08em;padding:6px 11px;background:transparent;
+    color:var(--ink);border:0;border-right:1px solid var(--ink);cursor:pointer;text-transform:uppercase}
+  .seg button:last-child{border-right:0}
+  .seg button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+
+  section{margin-bottom:56px}
+  .sec-h{display:flex;align-items:baseline;gap:14px;margin:0 0 6px}
+  .sec-h .n{font:11px var(--mono);letter-spacing:.16em;color:var(--red)}
+  .sec-h h2{font-size:17px;font-weight:600;margin:0}
+  .lede{color:var(--ink2);font-size:13.5px;margin:0 0 22px;max-width:74ch}
+  .lede b{color:var(--ink);font-weight:600}
+
+  /* ── stage (a 1:1 slice of a DSH window, scaled to fit) ──── */
+  .stage-outer{position:relative;overflow:hidden;background:var(--stage);
+    border:1px solid rgba(26,28,31,.5)}
+  .stage{position:relative;transform-origin:top left;background:var(--stage);overflow:hidden;
+    color:#e6ebf2;font-family:var(--sans)}
+  .stage .side{position:absolute;left:0;top:0;bottom:0;width:220px;
+    border-right:1px solid rgba(230,235,242,.10);padding:18px 16px}
+  .stage .side .lg{font:11px var(--mono);letter-spacing:.18em;color:rgba(230,235,242,.5);
+    text-transform:uppercase;margin-bottom:18px}
+  .stage .side .it{font-size:12.5px;color:rgba(230,235,242,.55);padding:5px 0}
+  .stage .side .it.on{color:#e6ebf2}
+  .stage .doc{position:absolute;left:250px;top:0;bottom:0;width:560px;padding:24px 0}
+  .stage .doc h3{font-size:15px;font-weight:600;margin:0 0 10px;letter-spacing:.01em}
+  .stage .doc p{margin:0 0 10px;font-size:13.5px;line-height:1.75;color:rgba(230,235,242,.80);
+    max-width:44ch}
+  .stage .doc .ln{height:7px;background:rgba(230,235,242,.10);margin-bottom:9px}
+  .stage .doc .ln.s1{width:88%} .stage .doc .ln.s2{width:72%} .stage .doc .ln.s3{width:80%}
+  /* light mode: paper surface, so the multiply watermark reads as a grey ghost */
+  .stage.light{background:#f8f6f0;color:#1c1f24}
+  .stage.light .side{border-right-color:rgba(26,28,31,.14)}
+  .stage.light .side .lg{color:#8a857c}
+  .stage.light .side .it{color:#5c6167}
+  .stage.light .side .it.on{color:#1c1f24}
+  .stage.light .doc p{color:#3a3f46}
+  .stage.light .doc .ln{background:rgba(26,28,31,.09)}
+  .stage .figure{position:absolute;right:0;bottom:0;pointer-events:none}
+  .stage .figure img{display:block;width:100%;height:auto}
+
+  .row{margin-bottom:26px}
+  .row-h{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+  .row-h .tag{font:11px var(--mono);letter-spacing:.14em;padding:3px 8px;border:1px solid currentColor;
+    text-transform:uppercase}
+  .row-h .tag.cur{color:var(--ink3)}
+  .row-h .tag.fix{color:var(--red)}
+  .row-h .name{font-size:13.5px;font-weight:600}
+  .row-h .num{margin-left:auto;font:11.5px var(--mono);color:var(--ink2);letter-spacing:.04em}
+  .row-h .num b{color:var(--ink);font-weight:600}
+
+  /* ── mask ramp ───────────────────────────────────────────── */
+  .ramp-wrap{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+  .ramp{border:1px solid var(--line);padding:12px 14px 10px;background:#fbf9f4}
+  .ramp h4{margin:0 0 10px;font:11px var(--mono);letter-spacing:.12em;color:var(--ink2);
+    text-transform:uppercase}
+  .ramp .bar{height:26px;border:1px solid var(--line);position:relative;
+    background:repeating-linear-gradient(45deg,rgba(26,28,31,.06) 0 6px,transparent 6px 12px)}
+  .ramp .bar i{position:absolute;inset:0;display:block}
+  .ramp .scale{display:flex;justify-content:space-between;font:10px var(--mono);color:var(--ink3);
+    margin-top:5px}
+
+  /* ── color columns ───────────────────────────────────────── */
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .col{border:1px solid var(--line);background:#fbf9f4;display:flex;flex-direction:column}
+  .col-h{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:8px}
+  .col-h .t{font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+  .col-h .n{font-size:13px;font-weight:600}
+  .col-h .rec{margin-left:auto;font:9.5px var(--mono);letter-spacing:.1em;color:#fff;background:var(--red);
+    padding:2px 5px}
+  .demo{padding:14px;flex:1;display:flex;flex-direction:column;gap:13px}
+  .demo .item{display:flex;flex-direction:column;gap:3px}
+  .demo .cap{font:9.5px var(--mono);letter-spacing:.14em;color:var(--ink3);text-transform:uppercase}
+  .demo .surface{background:var(--stage);color:#e6ebf2;padding:11px 12px;font-size:12.5px;
+    border:1px solid rgba(230,235,242,.08)}
+  .demo .surface.light{background:#f8f6f0;color:#1c1f24;border:1px solid rgba(26,28,31,.22)}
+  .demo a{text-decoration:underline;text-underline-offset:2px}
+  .demo .rowline{display:flex;align-items:center;gap:8px}
+  .demo .sq{width:9px;height:9px;flex:0 0 auto;display:inline-block}
+  .demo .focusbtn{display:inline-block;padding:5px 12px;border:1px solid;outline:1px solid;
+    outline-offset:2px;font-size:12px}
+  .demo .dock{display:inline-flex;font:11px var(--mono);letter-spacing:.12em;padding:5px 8px;
+    border:1px solid rgba(230,235,242,.22);background:rgba(16,20,26,.9);color:rgba(230,235,242,.7)}
+  .demo .dock b{color:#d2454e;font-weight:500}
+  .aa{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto;padding-top:10px}
+  .aa span{font:9.5px var(--mono);letter-spacing:.06em;border:1px solid var(--line);padding:2px 5px;
+    color:var(--ink2)}
+  .aa span.bad{border-color:rgba(163,38,46,.5);color:var(--red)}
+  .aa span.ok{border-color:rgba(32,66,54,.4);color:#204236}
+
+  table{width:100%;border-collapse:collapse;margin-top:22px;font-size:12.5px}
+  th,td{text-align:left;padding:7px 10px 7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font:10px var(--mono);letter-spacing:.12em;color:var(--ink3);text-transform:uppercase;
+    font-weight:400;border-bottom:1px solid rgba(26,28,31,.3)}
+  td.mono{font-family:var(--mono);font-size:11.5px}
+  .sw{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;
+    border:1px solid rgba(0,0,0,.2)}
+
+  .note{border-left:2px solid var(--red);padding:10px 0 10px 14px;margin:24px 0 0;color:var(--ink2);
+    font-size:13px;max-width:80ch}
+  .note b{color:var(--ink)}
+
+  @media (max-width:900px){
+    .cols,.ramp-wrap{grid-template-columns:1fr}
+    .ctrl{margin-left:0;width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>视觉修正对比
+    <span class="sub">Fix 01 · 主角尺寸 ／ Fix 03 · 红色分级</span>
+  </h1>
+  <div class="ctrl">
+    <label for="w">视口</label>
+    <input id="w" type="range" min="1024" max="1920" step="16" value="1280">
+    <span id="wv" class="mono" style="font:11.5px var(--mono);min-width:58px">1280px</span>
+    <div class="seg" role="group">
+      <button id="bd" aria-pressed="true">深色</button>
+      <button id="bl" aria-pressed="false">浅色</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════ FIX 01 ══════════════════ -->
+<section>
+  <div class="sec-h"><span class="n">01</span><h2>主角尺寸：从"偏小"到"在场"</h2></div>
+  <p class="lede">
+    当前公式 <code style="font-family:var(--mono);font-size:12px">min(calc((100vw - 960px) * 3/4), 520px, 42vh)</code>
+    把宽度绑定在<b>"视口减去 960px"</b>上：1280 时 240px、1360 时 300px、1440 时 360px。
+    1180 以下整层被 <code style="font-family:var(--mono);font-size:12px">@media</code> 隐藏，所以真正需要修的区间是
+    <b>1180–1440</b>——那正是笔记本最常见的窗口宽度。下面三个舞台按 <b>900px 高的窗口 1:1 渲染</b>，
+    只做整体缩放以便同屏。
+  </p>
+
+  <div class="note" style="border-left-color:#1c1f24;background:#fbf9f4;padding:12px 16px;margin:0 0 24px">
+    <b>一条漏查：</b>本节第一版按公式推算出"1024 下只有 48px"，但皮肤里还有
+    <code style="font-family:var(--mono);font-size:12px">@media (max-width:1180px){{…display:none}}</code>，
+    会把 scene / figure / HUD / A2 整体隐藏——1180 以下她根本不存在。已在装机后用真实 bundle 逐档实测。
+  </div>
+
+  <div class="row" data-k="cur">
+    <div class="row-h"><span class="tag cur">现状</span><span class="name">公式原样</span>
+      <span class="num">宽 <b>—</b> ／ 高 <b>—</b></span></div>
+    <div class="stage-outer"><div class="stage"></div></div>
+  </div>
+
+  <div class="row" data-k="floor">
+    <div class="row-h"><span class="tag fix">1a</span><span class="name">只加下限 max(240px, …)</span>
+      <span class="num">宽 <b>—</b> ／ 高 <b>—</b></span></div>
+    <div class="stage-outer"><div class="stage"></div></div>
+  </div>
+
+  <div class="row" data-k="clamp">
+    <div class="row-h"><span class="tag fix">1b · 已实施</span><span class="name">min(clamp(300px, 34vw, 560px), 42vh)</span>
+      <span class="num">宽 <b>—</b> ／ 高 <b>—</b></span></div>
+    <div class="stage-outer"><div class="stage"></div></div>
+  </div>
+
+  <div class="ramp-wrap">
+    <div class="ramp">
+      <h4>遮罩 · 现状（62% 才到全不透明）</h4>
+      <div class="bar"><i id="r1"></i></div>
+      <div class="scale"><span>0%</span><span>22%</span><span>42%</span><span>62%</span><span>100%</span></div>
+    </div>
+    <div class="ramp">
+      <h4>遮罩 · 修正（45% 到全不透明）</h4>
+      <div class="bar"><i id="r2"></i></div>
+      <div class="scale"><span>0%</span><span>16%</span><span>30%</span><span>45%</span><span>100%</span></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>为什么只加下限不够：</b>240px 的下限只在 1024–1280 之间起作用；1280 以上公式本来就已经大于 240，
+    等于没改。所以 1b 才是真正把"她"放回画面里的方案——代价是她会更靠近正文列，需要同时把遮罩收到 45%，
+    让她的左缘在 45% 处就开始淡出，而不是拖到 62%。
+    <br><br>
+    <b>1b 的代价要说清楚：</b>367px 时她的刀刃会压到正文列右缘约 100px。45% 的遮罩只能把刀锋软化，
+    不能消除——上面第三格里那条刀光就是从灰条上穿过去的。如果这个不可接受，退一档用
+    <code style="font-family:var(--mono);font-size:12px">clamp(280px, 30vw, 480px)</code>，代价是 1080 下只有 324px。
+  </div>
+</section>
+
+<!-- ══════════════════ FIX 03 ══════════════════ -->
+<section>
+  <div class="sec-h"><span class="n">03</span><h2>红色分级：让"红"重新表示"出事了"</h2></div>
+  <p class="lede">
+    现在品牌红同时是链接、焦点、选中、HUD、dock 激活和错误色。error <code style="font-family:var(--mono);font-size:12px">#8f2028</code>
+    与品牌红 <code style="font-family:var(--mono);font-size:12px">#a3262e</code> 只差 <b>ΔL* 4.8</b>，
+    在满屏红里不构成警示。下面两套解法，都是"红只做两件事"的不同切法。
+  </p>
+
+  <div class="cols" id="cols"></div>
+
+  <table>
+    <thead><tr><th>角色</th><th>现状</th><th>方案 A · 红退出交互</th><th>方案 B · 砖红分离</th></tr></thead>
+    <tbody>
+      <tr><td>链接 / 焦点</td>
+        <td class="mono"><span class="sw" style="background:#a3262e"></span>#a3262e</td>
+        <td class="mono"><span class="sw" style="background:#1c1f24"></span>墨色 #1c1f24</td>
+        <td class="mono"><span class="sw" style="background:#a3262e"></span>#a3262e</td></tr>
+      <tr><td>错误</td>
+        <td class="mono"><span class="sw" style="background:#8f2028"></span>#8f2028</td>
+        <td class="mono"><span class="sw" style="background:#a3262e"></span>#a3262e</td>
+        <td class="mono"><span class="sw" style="background:#8a3a30"></span>#8a3a30</td></tr>
+      <tr><td>与品牌红的差异</td>
+        <td>ΔL* 4.8 ／ 同色相</td>
+        <td>同色，但<b>内容区唯一</b></td>
+        <td>ΔL* 1.4 ／ 色相 +10.5° ／ 彩度 −14pt</td></tr>
+      <tr><td>正文对比度</td>
+        <td>8.08 : 1</td>
+        <td>6.76 : 1</td>
+        <td>7.12 : 1</td></tr>
+      <tr><td>代价</td>
+        <td>红失去警示力</td>
+        <td>链接失去品牌色</td>
+        <td>两红仍需并排才能分辨</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>我的判断：</b>方案 A 更彻底。尼尔的原始界面里，红是<b>告警与 YoRHa 标记</b>的颜色，
+    交互元素是白／灰。所以"红退出交互层"不是妥协，而是回到原作的语言——一旦内容区只剩一种红，
+    它天然就是警示，不需要靠色差去争。方案 B 是"两个红打架"，只在并排时能分辨。
+    <br><br>
+    <b>方案 A 的代价：</b>链接失去颜色后，必须由下划线承担识别（上面第一行就是靠下划线读出来的）。
+    这在密集正文里成立，但在按钮上不成立——按钮需要边框或反白，不能只靠一条 1px 线。
+  </div>
+</section>
+
+<script>
+/* ── data ─────────────────────────────────────────────────── */
+var VW = 1280;
+var MODE = 'dark';
+
+var SURF = { dark:{bg:'#111419', ink:'#e6ebf2', dim:'rgba(230,235,242,.62)'},
+             light:{bg:'#f8f6f0', ink:'#1c1f24', dim:'#4c5561'} };
+
+var WIN_H = 900;   /* 真实窗口高度假设；42vh 就是按它算的 */
+var FORMULA = {
+  cur:   function(vw){ return Math.min((vw - 960) * 0.75, 520, WIN_H * 0.42); },
+  floor: function(vw){ return Math.min(Math.max(240, (vw - 960) * 0.75), 520, WIN_H * 0.42); },
+  clamp: function(vw){ return Math.min(Math.max(300, vw * 0.34), 560, WIN_H * 0.42); }
+};
+
+var MASK = {
+  cur:  'linear-gradient(to right,transparent 0,rgba(0,0,0,.08) 22%,rgba(0,0,0,.5) 42%,#000 62%)',
+  fix:  'linear-gradient(to right,transparent 0,rgba(0,0,0,.10) 16%,rgba(0,0,0,.55) 30%,#000 45%)'
+};
+
+var RAMP = {
+  cur: 'linear-gradient(to right,transparent 0,rgba(0,0,0,.08) 22%,rgba(0,0,0,.5) 42%,#000 62%,#000 100%)',
+  fix: 'linear-gradient(to right,transparent 0,rgba(0,0,0,.10) 16%,rgba(0,0,0,.55) 30%,#000 45%,#000 100%)'
+};
+
+/* ── stage builder ────────────────────────────────────────── */
+function buildStage(el, wPx, kind){
+  var vh = 620;                        /* 模拟窗口高度 */
+  var fw = FORMULA[kind](VW);
+  if (fw < 0) fw = 0;
+  var fh = fw * 1512 / 930;            /* 原图宽高比 */
+
+  el.className = 'stage' + (MODE === 'light' ? ' light' : '');
+  el.style.width = VW + 'px';
+  el.style.height = vh + 'px';
+  el.innerHTML =
+    '<div class="side">' +
+      '<div class="lg">SESSIONS</div>' +
+      '<div class="it on">尺度系统落地</div>' +
+      '<div class="it">令牌门禁核对</div>' +
+      '<div class="it">开屏诊断框</div>' +
+      '<div class="it">状态形状冗余</div>' +
+    '</div>' +
+    '<div class="doc">' +
+      '<h3>尺度系统已落地</h3>' +
+      '<p>字号档位与间距体系已经进到自注入样式表里，平台令牌契约仍然保持 89/89。</p>' +
+      '<div class="ln s1"></div><div class="ln s3"></div><div class="ln s2"></div>' +
+      '<p>剩下的问题是画面：主角在常见窗口宽度下会退化成一条竖边，右半屏没有任何可读信息。</p>' +
+      '<div class="ln s1"></div><div class="ln s2"></div>' +
+    '</div>' +
+    '<div class="figure"><img src="../assets/character.png" alt=""></div>';
+
+  var fig = el.querySelector('.figure');
+  fig.style.width = fw + 'px';
+  fig.style.height = fh + 'px';
+
+  /* mask + dark-mode treatment, exactly as shipped */
+  if (MODE === 'dark'){
+    fig.style.webkitMaskImage = MASK[kind === 'cur' ? 'cur' : 'fix'];
+    fig.style.maskImage = MASK[kind === 'cur' ? 'cur' : 'fix'];
+    fig.style.filter = 'contrast(1.06) brightness(1.05) drop-shadow(-2px 0 10px rgba(186,201,222,.22))';
+    fig.style.opacity = '1';
+  } else {
+    fig.style.webkitMaskImage = 'radial-gradient(76% 84% at 62% 50%,#000 0 30%,rgba(0,0,0,.5) 66%,transparent 92%)';
+    fig.style.maskImage = 'radial-gradient(76% 84% at 62% 50%,#000 0 30%,rgba(0,0,0,.5) 66%,transparent 92%)';
+    fig.style.filter = 'grayscale(1) brightness(2) contrast(.58)';
+    fig.style.opacity = '.34';
+    fig.style.mixBlendMode = 'multiply';
+  }
+
+  /* scale to fit */
+  var outer = el.parentNode;
+  var avail = outer.clientWidth;
+  var k = Math.min(1, avail / VW);
+  el.style.transform = 'scale(' + k + ')';
+  outer.style.height = Math.round(vh * k) + 'px';
+  /* hug the scaled stage, otherwise the dark outer shows as a strip on the right */
+  outer.style.width = Math.round(VW * k) + 'px';
+
+  return { w: Math.round(fw), h: Math.round(fh), k: k };
+}
+
+/* ── color demos ──────────────────────────────────────────── */
+var VARIANTS = [
+  { id:'cur', tag:'现状', name:'红 = 一切强调', rec:false,
+    light:{ link:'#a3262e', focus:'#a3262e', err:'#8f2028', warn:'#a8534f' },
+    dark :{ link:'#dc4b54', focus:'#dc4b54', err:'#f0656c', warn:'#a87370' } },
+  { id:'A', tag:'方案 A', name:'红退出交互', rec:true,
+    light:{ link:'#1c1f24', focus:'#1c1f24', err:'#a3262e', warn:'#a8534f' },
+    dark :{ link:'#e6ebf2', focus:'#e6ebf2', err:'#dc4b54', warn:'#a87370' } },
+  { id:'B', tag:'方案 B', name:'砖红分离', rec:false,
+    light:{ link:'#a3262e', focus:'#a3262e', err:'#8a3a30', warn:'#a8534f' },
+    dark :{ link:'#dc4b54', focus:'#dc4b54', err:'#c9705f', warn:'#a87370' } }
+];
+
+function buildCols(){
+  var host = document.getElementById('cols');
+  host.innerHTML = VARIANTS.map(function(v){
+    var c = MODE === 'dark' ? v.dark : v.light;
+    var s = SURF[MODE];
+    return '<div class="col">' +
+      '<div class="col-h"><span class="t">' + v.tag + '</span><span class="n">' + v.name + '</span>' +
+        (v.rec ? '<span class="rec">推荐</span>' : '') + '</div>' +
+      '<div class="demo">' +
+        '<div class="item"><span class="cap">正文里的链接</span>' +
+          '<div class="surface" style="background:' + s.bg + ';color:' + s.ink + '">' +
+          '查看 <a href="#" style="color:' + c.link + '">构建日志</a> 了解详情</div></div>' +
+        '<div class="item"><span class="cap">焦点态</span>' +
+          '<div class="surface" style="background:' + s.bg + '">' +
+          '<span class="focusbtn" style="color:' + s.ink + ';border-color:' + c.focus + ';outline-color:' + c.focus + '">重新执行</span>' +
+          '</div></div>' +
+        '<div class="item"><span class="cap">错误行</span>' +
+          '<div class="surface" style="background:' + s.bg + '">' +
+          '<div class="rowline"><span class="sq" style="background:' + c.err + ';transform:rotate(45deg)"></span>' +
+          '<span style="color:' + c.err + '">构建失败：端口 8326 被占用</span></div></div></div>' +
+        '<div class="item"><span class="cap">警告行</span>' +
+          '<div class="surface" style="background:' + s.bg + '">' +
+          '<div class="rowline"><span class="sq" style="border:1px solid ' + c.warn + '"></span>' +
+          '<span style="color:' + c.warn + '">上下文即将用尽</span></div></div></div>' +
+        '<div class="item"><span class="cap">Dock（身份层）</span>' +
+          '<div><span class="dock">P:<b>D</b>　A:X　W:R</span></div></div>' +
+        '<div class="aa">' +
+          '<span class="' + (v.id === 'cur' ? 'bad' : 'ok') + '">错误 vs 品牌 ' +
+            (v.id === 'cur' ? 'ΔL* 4.8' : v.id === 'A' ? '唯一红' : 'Δhue 10.5°') + '</span>' +
+        '</div>' +
+      '</div></div>';
+  }).join('');
+}
+
+/* ── render ───────────────────────────────────────────────── */
+function render(){
+  document.getElementById('wv').textContent = VW + 'px';
+
+  Array.prototype.forEach.call(document.querySelectorAll('.row'), function(row){
+    var kind = row.getAttribute('data-k');
+    var stage = row.querySelector('.stage');
+    var outer = stage.parentNode;
+    outer.style.width = ''; outer.style.height = '';
+    var r = buildStage(stage, VW, kind);
+    var num = row.querySelector('.num');
+    num.innerHTML = '宽 <b>' + r.w + 'px</b> ／ 高 <b>' + r.h + 'px</b>' +
+      (r.w === 0 ? ' <span style="color:var(--red)">声明失效</span>' : '');
+  });
+
+  document.getElementById('r1').style.background = RAMP.cur;
+  document.getElementById('r2').style.background = RAMP.fix;
+
+  document.body.style.background = MODE === 'dark' ? '#f2efe8' : '#f2efe8';
+  buildCols();
+}
+
+/* ── controls ─────────────────────────────────────────────── */
+document.getElementById('w').addEventListener('input', function(e){
+  VW = parseInt(e.target.value, 10); render();
+});
+document.getElementById('bd').addEventListener('click', function(){
+  MODE = 'dark'; this.setAttribute('aria-pressed','true');
+  document.getElementById('bl').setAttribute('aria-pressed','false'); render();
+});
+document.getElementById('bl').addEventListener('click', function(){
+  MODE = 'light'; this.setAttribute('aria-pressed','true');
+  document.getElementById('bd').setAttribute('aria-pressed','false'); render();
+});
+
+/* ?vw=1280&mode=dark  → 确定性截图 */
+(function(){
+  var q = new URLSearchParams(location.search);
+  if (q.get('vw')) { VW = parseInt(q.get('vw'),10) || 1280;
+    document.getElementById('w').value = VW; }
+  if (q.get('mode') === 'light'){
+    MODE = 'light';
+    document.getElementById('bl').setAttribute('aria-pressed','true');
+    document.getElementById('bd').setAttribute('aria-pressed','false');
+  }
+  render();
+})();
+
+window.addEventListener('resize', function(){
+  clearTimeout(window.__rt);
+  window.__rt = setTimeout(render, 120);
+});
+</script>
+</body>
+</html>
